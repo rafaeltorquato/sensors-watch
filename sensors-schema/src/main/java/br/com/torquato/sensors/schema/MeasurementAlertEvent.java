@@ -3,17 +3,19 @@ package br.com.torquato.sensors.schema;
 import java.time.LocalDateTime;
 
 /**
- * Represents an alert that humidity overcome the configured threshold.
- * @param id The id of the event.
+ * Represents an alert that some measurement overcome the configured threshold.
+ *
+ * @param id          The id of the event.
  * @param sourceEvent The event that overcome the configured threshold.
- * @param moment The moment of notification.
- * @param threshold The configured threshold.
+ * @param moment      The moment of notification.
+ * @param threshold   The configured threshold.
  */
-public record HumidityAlertEvent(String id,
-                                 HumidityEvent sourceEvent,
-                                 LocalDateTime moment,
-                                 float threshold) {
-    public HumidityAlertEvent {
+public record MeasurementAlertEvent(String id,
+                                    MeasurementEvent sourceEvent,
+                                    LocalDateTime moment,
+                                    int threshold) {
+
+    public MeasurementAlertEvent {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be null or empty.");
         }

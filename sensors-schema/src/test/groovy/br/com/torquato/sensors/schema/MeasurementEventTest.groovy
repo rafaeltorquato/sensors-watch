@@ -5,16 +5,17 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class HumidityEventTest extends Specification {
+class MeasurementEventTest extends Specification {
 
 
     def "Should fail when ID is null or empty"() {
         when:
-        new HumidityEvent(
+        new MeasurementEvent(
                 id,
                 "w01",
                 "s01",
-                0.3,
+                30,
+                MeasurementType.TEMPERATURE,
                 LocalDateTime.now()
         )
 
@@ -29,11 +30,12 @@ class HumidityEventTest extends Specification {
 
     def "Should fail when Warehouse ID is null or empty"() {
         when:
-        new HumidityEvent(
+        new MeasurementEvent(
                 "1",
                 warehouseId as String,
                 "s01",
-                0.3,
+                30,
+                MeasurementType.TEMPERATURE,
                 LocalDateTime.now()
         )
 
@@ -47,11 +49,12 @@ class HumidityEventTest extends Specification {
 
     def "Should fail when Sensor ID is null or empty"() {
         when:
-        new HumidityEvent(
+        new MeasurementEvent(
                 "1",
                 "w01",
                 sensorId,
-                0.3,
+                30,
+                MeasurementType.TEMPERATURE,
                 LocalDateTime.now()
         )
 
@@ -63,13 +66,31 @@ class HumidityEventTest extends Specification {
         sensorId << [null, "", " "]
     }
 
-    def "Should fail when Moment is null"() {
+    def "Should fail when Type is null"() {
         when:
-        new HumidityEvent(
+        new MeasurementEvent(
                 "1",
                 "w01",
                 "s01",
-                0.3,
+                30,
+                null,
+                LocalDateTime.now()
+        )
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "Type cannot be null."
+    }
+
+
+    def "Should fail when Moment is null"() {
+        when:
+        new MeasurementEvent(
+                "1",
+                "w01",
+                "s01",
+                (short) 30,
+                MeasurementType.TEMPERATURE,
                 null
         )
 
@@ -78,13 +99,14 @@ class HumidityEventTest extends Specification {
         e.message == "Moment cannot be null."
     }
 
-    def "Should create a HumidityEvent with success"() {
+    def "Should create a MeasurementEvent with success"() {
         when:
-        def event = new HumidityEvent(
+        def event = new MeasurementEvent(
                 "1",
                 "w01",
                 "s01",
-                0.3,
+                (short) 30,
+                MeasurementType.HUMIDITY,
                 LocalDateTime.now()
         )
 

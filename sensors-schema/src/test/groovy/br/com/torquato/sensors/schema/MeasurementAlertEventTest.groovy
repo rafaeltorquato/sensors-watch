@@ -4,24 +4,24 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class TemperatureAlertEventTest extends Specification {
+class MeasurementAlertEventTest extends Specification {
 
-    def validTemperatureEvent = new TemperatureEvent(
+    def validMeasurementEvent = new MeasurementEvent(
             "1",
             "w01",
             "s01",
-            (short) 30,
-            DegreeUnit.C,
+            30,
+            MeasurementType.TEMPERATURE,
             LocalDateTime.now()
     )
 
     def "Should fail when ID is null or empty"() {
         when:
-        new TemperatureAlertEvent(
+        new MeasurementAlertEvent(
                 id,
-                validTemperatureEvent,
+                validMeasurementEvent,
                 LocalDateTime.now(),
-                (short) 40
+                40
         )
 
         then:
@@ -36,11 +36,11 @@ class TemperatureAlertEventTest extends Specification {
 
     def "Should fail when Source Event is null"() {
         when:
-        new TemperatureAlertEvent(
+        new MeasurementAlertEvent(
                 "1",
                 null,
                 LocalDateTime.now(),
-                (short) 40
+                40
         )
 
         then:
@@ -50,9 +50,9 @@ class TemperatureAlertEventTest extends Specification {
 
     def "Should fail when Moment is null"() {
         when:
-        new TemperatureAlertEvent(
+        new MeasurementAlertEvent(
                 "1",
-                validTemperatureEvent,
+                validMeasurementEvent,
                 null,
                 (short) 40
         )
@@ -64,9 +64,9 @@ class TemperatureAlertEventTest extends Specification {
 
     def "Should create a HumidityAlertEvent with success"() {
         when:
-        def event = new TemperatureAlertEvent(
+        def event = new MeasurementAlertEvent(
                 "1",
-                validTemperatureEvent,
+                validMeasurementEvent,
                 LocalDateTime.now(),
                 (short) 40
         )

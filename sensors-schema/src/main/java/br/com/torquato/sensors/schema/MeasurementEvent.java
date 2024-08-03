@@ -2,21 +2,24 @@ package br.com.torquato.sensors.schema;
 
 import java.time.LocalDateTime;
 
+
 /**
- * Represents a humidity change.
+ * Represents a measurement event.
  * @param id The id of the event.
  * @param warehouseId The warehouse id which it events was fired.
  * @param sensorId The id of the sensor that gathered the change.
- * @param humidity The humidity in percentage.
+ * @param value The value measured.
+ * @param type The type of measurement.
  * @param moment The moment that change happen.
  */
-public record HumidityEvent(String id,
-                            String warehouseId,
-                            String sensorId,
-                            float humidity,
-                            LocalDateTime moment) {
+public record MeasurementEvent(String id,
+                               String warehouseId,
+                               String sensorId,
+                               int value,
+                               MeasurementType type,
+                               LocalDateTime moment) {
 
-    public HumidityEvent {
+    public MeasurementEvent {
         if(id == null || id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be null or empty.");
         }
@@ -25,6 +28,9 @@ public record HumidityEvent(String id,
         }
         if(sensorId == null || sensorId.isBlank()) {
             throw new IllegalArgumentException("Sensor ID cannot be null or empty.");
+        }
+        if(type == null) {
+            throw new IllegalArgumentException("Type cannot be null.");
         }
         if(moment == null) {
             throw new IllegalArgumentException("Moment cannot be null.");
