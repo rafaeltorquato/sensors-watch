@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  application:
+    name: 'werehouse-service'
+  kafka:
+    admin:
+      fail-fast: true
+    bootstrap-servers: localhost:19092
+    properties:
+      schema.registry.url: http://localhost:8081
+      value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+    producer:
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+      batch-size: 100
+
+app:
+  warehouse-id: 'default'
+  temperature:
+    server-port: 3344
+  humidity:
+    server-port: 3345
