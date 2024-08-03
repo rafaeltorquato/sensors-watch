@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public record MeasurementAlertEvent(String id,
                                     MeasurementEvent sourceEvent,
                                     LocalDateTime moment,
-                                    int threshold) {
+                                    Integer threshold) {
 
     public MeasurementAlertEvent {
         if (id == null || id.isBlank()) {
@@ -24,6 +24,9 @@ public record MeasurementAlertEvent(String id,
         }
         if (moment == null) {
             throw new IllegalArgumentException("Moment cannot be null.");
+        }
+        if (threshold == null) {
+            throw new IllegalArgumentException("Threshold cannot be null.");
         }
     }
 }

@@ -89,7 +89,7 @@ class MeasurementEventTest extends Specification {
                 "1",
                 "w01",
                 "s01",
-                (short) 30,
+                30,
                 MeasurementType.TEMPERATURE,
                 null
         )
@@ -99,13 +99,29 @@ class MeasurementEventTest extends Specification {
         e.message == "Moment cannot be null."
     }
 
+    def "Should fail when Value is null"() {
+        when:
+        new MeasurementEvent(
+                "1",
+                "w01",
+                "s01",
+                null,
+                MeasurementType.TEMPERATURE,
+                LocalDateTime.now()
+        )
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "Value cannot be null."
+    }
+
     def "Should create a MeasurementEvent with success"() {
         when:
         def event = new MeasurementEvent(
                 "1",
                 "w01",
                 "s01",
-                (short) 30,
+                30,
                 MeasurementType.HUMIDITY,
                 LocalDateTime.now()
         )

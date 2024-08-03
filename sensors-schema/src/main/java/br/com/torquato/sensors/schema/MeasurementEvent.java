@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public record MeasurementEvent(String id,
                                String warehouseId,
                                String sensorId,
-                               int value,
+                               Integer value,
                                MeasurementType type,
                                LocalDateTime moment) {
 
@@ -29,11 +29,15 @@ public record MeasurementEvent(String id,
         if(sensorId == null || sensorId.isBlank()) {
             throw new IllegalArgumentException("Sensor ID cannot be null or empty.");
         }
+        if(value == null) {
+            throw new IllegalArgumentException("Value cannot be null.");
+        }
         if(type == null) {
             throw new IllegalArgumentException("Type cannot be null.");
         }
         if(moment == null) {
             throw new IllegalArgumentException("Moment cannot be null.");
         }
+
     }
 }

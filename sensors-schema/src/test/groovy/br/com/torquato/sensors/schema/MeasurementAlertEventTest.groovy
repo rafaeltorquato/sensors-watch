@@ -54,12 +54,26 @@ class MeasurementAlertEventTest extends Specification {
                 "1",
                 validMeasurementEvent,
                 null,
-                (short) 40
+                40
         )
 
         then:
         def e = thrown(IllegalArgumentException)
         e.message == "Moment cannot be null."
+    }
+
+    def "Should fail when threshold is null"() {
+        when:
+        new MeasurementAlertEvent(
+                "1",
+                validMeasurementEvent,
+                LocalDateTime.now(),
+                null
+        )
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "Threshold cannot be null."
     }
 
     def "Should create a HumidityAlertEvent with success"() {
@@ -68,7 +82,7 @@ class MeasurementAlertEventTest extends Specification {
                 "1",
                 validMeasurementEvent,
                 LocalDateTime.now(),
-                (short) 40
+                40
         )
 
         then:
