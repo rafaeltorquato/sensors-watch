@@ -11,11 +11,12 @@ import java.time.LocalDateTime
 
 class MeasurementEventRecipientKafkaAdapterTest extends Specification {
 
-    KafkaTemplate<String, Object> kafkaTemplate = Mock()
-    MeasurementEventRecipientKafka adapter
+    KafkaTemplate<String, Object> mockedKafkaTemplate
+    MeasurementEventRecipientKafka recipient
 
     def setup() {
-        adapter = new MeasurementEventRecipientKafka(kafkaTemplate)
+        mockedKafkaTemplate = Mock()
+        recipient = new MeasurementEventRecipientKafka(mockedKafkaTemplate)
     }
 
     def "Should send MeasurementEvent"() {
@@ -30,10 +31,10 @@ class MeasurementEventRecipientKafkaAdapterTest extends Specification {
         )
 
         when:
-        adapter.send(event)
+        recipient.send(event)
 
         then:
-        1 * kafkaTemplate.send(_, _, event)
+        1 * mockedKafkaTemplate.send(_, _, event)
 
         where:
         type                        | topic
@@ -53,9 +54,9 @@ class MeasurementEventRecipientKafkaAdapterTest extends Specification {
         )
 
         when:
-        adapter.send(malformedEvent)
+        recipient.send(malformedEvent)
 
         then:
-        1 * kafkaTemplate.send("malformed-measurements-data", _, malformedEvent)
+        1 * mockedKafkaTemplate.send("malformed-measurements-data", _, malformedEvent)
     }
 }
