@@ -15,7 +15,7 @@ import org.springframework.messaging.Message;
 @Slf4j
 @MessageEndpoint
 @RequiredArgsConstructor
-public class MeasurementUdpAdapter {
+public class MeasurementUdp {
 
     private final MeasurementEventMapper eventMapper;
     private final MalformedMeasurementEventMapper malformedEventMapper;

@@ -16,13 +16,13 @@ class MeasurementUdpAdapterTest extends Specification {
     MeasurementEventMapper eventMapper
     MalformedMeasurementEventMapper malformedEventMapper
     br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient messageRecipient
-    MeasurementUdpAdapter adapter
+    MeasurementUdp adapter
 
     def setup() {
         eventMapper = Stub()
         malformedEventMapper = Stub()
         messageRecipient = Mock(br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient)
-        adapter = new MeasurementUdpAdapter(eventMapper, malformedEventMapper, messageRecipient)
+        adapter = new MeasurementUdp(eventMapper, malformedEventMapper, messageRecipient)
     }
 
     def "Should handle a malformed event properly"() {
