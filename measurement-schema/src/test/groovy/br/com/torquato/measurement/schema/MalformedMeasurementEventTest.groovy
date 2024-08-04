@@ -1,4 +1,4 @@
-package br.com.torquato.sensors.schema
+package br.com.torquato.measurement.schema
 
 import spock.lang.Specification
 
