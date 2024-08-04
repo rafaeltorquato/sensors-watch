@@ -16,7 +16,7 @@ The project was divided into three pieces:
 - [x] Monitoring Service;
 - [x] Sensors Schema;
 - [ ] IT Tests;
-- [ ] Unit Tests;
+- [x] Unit Tests;
 - [ ] Observability;
 - [ ] Fallback;
 - [ ] Logs;

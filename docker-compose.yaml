@@ -8,22 +8,9 @@ services:
     ports:
       - "2181:2181"
 
-  schema-registry:
-    image: confluentinc/cp-schema-registry:latest
-    hostname: schema-registry
-    depends_on:
-      - kafka-broker-1
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
-      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka-broker-1:9092,PLAINTEXT_INTERNAL://localhost:19092
-      SCHEMA_REGISTRY_DEBUG: 'true'
-
   kafka-broker-1:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker-1
     hostname: kafka-broker-1
     ports:
       - "19092:19092"
@@ -36,13 +23,81 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092,PLAINTEXT_INTERNAL://localhost:19092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    hostname: schema-registry
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka-broker-1:9092,PLAINTEXT_INTERNAL://localhost:19092
+      SCHEMA_REGISTRY_DEBUG: 'true'
+    depends_on:
+      kafka-broker-1:
+        condition: service_healthy
 
   postgres:
     image: postgres
+    container_name: postgres
+    hostname: postgres
     restart: always
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "measurements"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d measurements'"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
-      - "5432:5432"
+      - 5432:5432
+
+  warehouse1:
+    container_name: warehouse1
+    build:
+      dockerfile: Dockerfile_warehouse
+    environment:
+      - 'SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092'
+      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=schema-registry:8081'
+    ports:
+      - 3345:3345/udp
+      - 3344:3344/udp
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "500MB"
+    depends_on:
+      schema-registry:
+        condition: service_started
+
+  monitoring:
+    container_name: monitoring
+    build:
+      dockerfile: Dockerfile_monitoring
+    environment:
+      - 'SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092'
+      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=schema-registry:8081'
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/measurements'
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "500MB"
+    depends_on:
+      schema-registry:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      warehouse1:
+        condition: service_started

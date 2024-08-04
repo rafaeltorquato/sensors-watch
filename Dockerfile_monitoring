@@ -1,0 +1,17 @@
+FROM maven:3.9.8-amazoncorretto-21-al2023 AS build
+
+RUN mkdir /measurement-schema
+COPY measurement-schema /measurement-schema/.
+RUN cd /measurement-schema && mvn clean install
+
+RUN mkdir /warehouse-service
+COPY monitoring-service /monitoring-service/.
+RUN cd /monitoring-service && mvn clean install
+
+FROM amazoncorretto:21
+COPY --from=build /monitoring-service/target/*.jar /app.jar
+
+ENTRYPOINT ["java", \
+  "-Dspring.profiles.active=local", \
+  "-jar", "/app.jar" \
+  ]
