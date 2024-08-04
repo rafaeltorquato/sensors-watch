@@ -10,7 +10,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-public class UdpAdaptersConfig {
+public class UdpConfig {
 
     @Bean
     public MessageChannel inboundChannel() {
