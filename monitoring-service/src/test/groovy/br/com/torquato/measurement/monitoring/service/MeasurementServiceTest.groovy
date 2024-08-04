@@ -3,10 +3,12 @@ package br.com.torquato.measurement.monitoring.service
 import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException
 import br.com.torquato.measurement.monitoring.domain.MeasurementThreshold
 import br.com.torquato.measurement.monitoring.domain.MeasurementThresholdRepository
+import br.com.torquato.measurement.monitoring.domain.ProcessedEvent
 import br.com.torquato.measurement.monitoring.domain.ProcessedEventRepository
 import br.com.torquato.measurement.monitoring.port.MeasurementAlertEventRecipient
 import br.com.torquato.measurement.schema.MeasurementEvent
 import br.com.torquato.measurement.schema.MeasurementType
+import org.springframework.dao.DuplicateKeyException
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -20,8 +22,8 @@ class MeasurementServiceTest extends Specification {
 
     def setup() {
         mockedThresholdRepository = Stub()
-        mockedProcessedEventRepository = Mock()
-        mockedAlertEventRecipient = Stub()
+        mockedProcessedEventRepository = Stub()
+        mockedAlertEventRecipient = Mock()
 
         service = new MeasurementService(
                 mockedThresholdRepository,
@@ -143,15 +145,15 @@ class MeasurementServiceTest extends Specification {
                     threshold
             ))
         }
-        mockedProcessedEventRepository.save(_) >> {
-            throw new DuplicatedEventException("Mocked Exception")
+        mockedProcessedEventRepository.save(_ as ProcessedEvent) >> {
+            throw new DuplicateKeyException("Mocked Exception")
         }
 
         when:
         service.handle(event)
 
         then:
-        0 * mockedAlertEventRecipient.send(_)
+        thrown(DuplicatedEventException)
 
         where:
         type                        | threshold | value

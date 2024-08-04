@@ -12,10 +12,9 @@ The project was divided into three pieces:
 
 
 ## TODO List
-- [ ] Warehouse Service;
-- [ ] Monitoring Service;
+- [x] Warehouse Service;
+- [x] Monitoring Service;
 - [x] Sensors Schema;
-- [ ] Kafka Streams;
 - [ ] IT Tests;
 - [ ] Unit Tests;
 - [ ] Observability;

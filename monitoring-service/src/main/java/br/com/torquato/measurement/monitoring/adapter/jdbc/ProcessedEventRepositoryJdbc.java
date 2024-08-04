@@ -4,6 +4,7 @@ import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException;
 import br.com.torquato.measurement.monitoring.domain.ProcessedEvent;
 import br.com.torquato.measurement.monitoring.domain.ProcessedEventRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,8 +21,7 @@ public class ProcessedEventRepositoryJdbc implements ProcessedEventRepository {
                 processedEvent.eventId()
         );
         if (update != 1) {
-            final String msg = "Event with id %s is duplicated.".formatted(processedEvent.eventId());
-            throw new DuplicatedEventException(msg);
+            throw new DuplicateKeyException("No rows inserted!");
         }
     }
 }

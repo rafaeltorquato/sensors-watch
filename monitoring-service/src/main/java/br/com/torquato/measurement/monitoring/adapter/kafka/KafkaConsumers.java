@@ -1,5 +1,6 @@
 package br.com.torquato.measurement.monitoring.adapter.kafka;
 
+import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException;
 import br.com.torquato.measurement.monitoring.service.MeasurementService;
 import br.com.torquato.measurement.schema.MalformedMeasurementEvent;
 import br.com.torquato.measurement.schema.MeasurementAlertEvent;
@@ -13,13 +14,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ConsumersKafka {
+public class KafkaConsumers {
 
     private final MeasurementService measurementService;
 
     @KafkaListener(topics = {"temperature-measurements-data", "humidity-measurements-data"})
     public void handleMeasurementEvent(final ConsumerRecord<String, MeasurementEvent> record) {
-        measurementService.handle(record.value());
+        try {
+            measurementService.handle(record.value());
+        } catch (DuplicatedEventException e) {
+            log.info("{}", e.getMessage());
+        }
     }
 
     @KafkaListener(topics = {"temperature-measurements-alert-data", "humidity-measurements-alert-data"})
