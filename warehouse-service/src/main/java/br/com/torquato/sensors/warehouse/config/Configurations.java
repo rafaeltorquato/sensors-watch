@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
-public class AppConfig {
+public class Configurations {
 
     private String warehouseId;
     private int temperatureServerPort;

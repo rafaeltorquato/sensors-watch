@@ -3,7 +3,7 @@ package br.com.torquato.sensors.warehouse.adapter.mapper;
 import br.com.torquato.sensors.schema.MalformedMeasurementEvent;
 import br.com.torquato.sensors.schema.MeasurementType;
 import br.com.torquato.sensors.warehouse.utils.LocalDateTimeUtils;
-import br.com.torquato.sensors.warehouse.config.AppConfig;
+import br.com.torquato.sensors.warehouse.config.Configurations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -20,11 +20,11 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class MalformedMeasurementEventMapper {
 
-    private final AppConfig appConfig;
+    private final Configurations configurations;
     private final Supplier<LocalDateTime> localDateTimeSupplier;
     private final Supplier<UUID> ramdomUuidSupplier;
 
-    public MalformedMeasurementEvent from(final Message<byte[]> message, final MeasurementType type) {
+    public  MalformedMeasurementEvent from(final Message<byte[]> message, final MeasurementType type) {
         final MessageHeaders headers = message.getHeaders();
         UUID uuid = headers.getId();
         if(uuid == null) {
@@ -37,7 +37,7 @@ public class MalformedMeasurementEventMapper {
 
         return new MalformedMeasurementEvent(
                 messageId,
-                this.appConfig.getWarehouseId(),
+                this.configurations.getWarehouseId(),
                 type,
                 moment,
                 new String(message.getPayload(), StandardCharsets.UTF_8)

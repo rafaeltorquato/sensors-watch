@@ -3,7 +3,7 @@ package br.com.torquato.sensors.warehouse.adapter.mapper;
 import br.com.torquato.sensors.schema.MeasurementEvent;
 import br.com.torquato.sensors.schema.MeasurementType;
 import br.com.torquato.sensors.warehouse.utils.LocalDateTimeUtils;
-import br.com.torquato.sensors.warehouse.config.AppConfig;
+import br.com.torquato.sensors.warehouse.config.Configurations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class MeasurementEventMapper {
 
-    private final AppConfig appConfig;
+    private final Configurations configurations;
     private final Supplier<LocalDateTime> localDateTimeSupplier;
     private final Supplier<UUID> ramdomUuidSupplier;
 
@@ -43,7 +43,7 @@ public class MeasurementEventMapper {
 
         return new MeasurementEvent(
                 messageId,
-                this.appConfig.getWarehouseId(),
+                this.configurations.getWarehouseId(),
                 sensorId,
                 value,
                 type,

@@ -34,10 +34,7 @@ public class MeasurementUdpAdapter {
     private void handle(Message<byte[]> message, MeasurementType type) {
         final MeasurementEvent event;
         try {
-            event = this.eventMapper.from(
-                    message,
-                    type
-            );
+            event = this.eventMapper.from(message, type);
         } catch (Exception e) {
             log.error("Malformed %s measurement event.".formatted(type) , e);
             final MalformedMeasurementEvent malformedEvent = this.malformedEventMapper.from(
