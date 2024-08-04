@@ -1,8 +1,8 @@
-package br.com.torquato.sensors.warehouse.adapter.kafka;
+package br.com.torquato.measurement.warehouse.adapter.kafka;
 
-import br.com.torquato.sensors.schema.MalformedMeasurementEvent;
-import br.com.torquato.sensors.schema.MeasurementEvent;
-import br.com.torquato.sensors.warehouse.port.MeasurementEventRecipient;
+import br.com.torquato.measurement.schema.MalformedMeasurementEvent;
+import br.com.torquato.measurement.schema.MeasurementEvent;
+import br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

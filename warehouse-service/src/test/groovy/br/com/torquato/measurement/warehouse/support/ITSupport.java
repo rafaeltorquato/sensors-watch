@@ -1,4 +1,4 @@
-package br.com.torquato.sensors.warehouse.support;
+package br.com.torquato.measurement.warehouse.support;
 
 
 import org.springframework.boot.test.context.SpringBootTest;

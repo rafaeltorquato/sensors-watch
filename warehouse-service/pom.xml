@@ -9,7 +9,7 @@
         <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>br.com.torquato.sensors</groupId>
+    <groupId>br.com.torquato.measurement</groupId>
     <artifactId>warehouse-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>warehouse-service</name>
@@ -62,8 +62,8 @@
             <artifactId>spring-integration-ip</artifactId>
         </dependency>
         <dependency>
-            <groupId>br.com.torquato.sensors</groupId>
-            <artifactId>sensors-schema</artifactId>
+            <groupId>br.com.torquato.measurement</groupId>
+            <artifactId>measurement-schema</artifactId>
             <version>1.0.0</version>
         </dependency>
         <!-- Dev -->
@@ -191,8 +191,8 @@
                 <version>0.8.12</version>
                 <configuration>
                     <excludes>
-                        <exclude>br/com/torquato/sensors/warehouse/config/*</exclude>
-                        <exclude>br/com/torquato/sensors/warehouse/WarehouseServiceApplication.class</exclude>
+                        <exclude>br/com/torquato/measurement/warehouse/config/*</exclude>
+                        <exclude>br/com/torquato/measurement/warehouse/WarehouseServiceApplication.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

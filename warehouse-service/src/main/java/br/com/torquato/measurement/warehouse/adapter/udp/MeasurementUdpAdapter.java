@@ -1,11 +1,11 @@
-package br.com.torquato.sensors.warehouse.adapter.udp;
+package br.com.torquato.measurement.warehouse.adapter.udp;
 
-import br.com.torquato.sensors.schema.MalformedMeasurementEvent;
-import br.com.torquato.sensors.schema.MeasurementEvent;
-import br.com.torquato.sensors.schema.MeasurementType;
-import br.com.torquato.sensors.warehouse.adapter.mapper.MalformedMeasurementEventMapper;
-import br.com.torquato.sensors.warehouse.adapter.mapper.MeasurementEventMapper;
-import br.com.torquato.sensors.warehouse.port.MeasurementEventRecipient;
+import br.com.torquato.measurement.schema.MalformedMeasurementEvent;
+import br.com.torquato.measurement.schema.MeasurementEvent;
+import br.com.torquato.measurement.schema.MeasurementType;
+import br.com.torquato.measurement.warehouse.adapter.mapper.MalformedMeasurementEventMapper;
+import br.com.torquato.measurement.warehouse.adapter.mapper.MeasurementEventMapper;
+import br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.annotation.MessageEndpoint;

@@ -1,8 +1,8 @@
-package br.com.torquato.sensors.warehouse.adapter.kafka
+package br.com.torquato.measurement.warehouse.adapter.kafka
 
-import br.com.torquato.sensors.schema.MalformedMeasurementEvent
-import br.com.torquato.sensors.schema.MeasurementEvent
-import br.com.torquato.sensors.schema.MeasurementType
+import br.com.torquato.measurement.schema.MalformedMeasurementEvent
+import br.com.torquato.measurement.schema.MeasurementEvent
+import br.com.torquato.measurement.schema.MeasurementType
 import org.springframework.kafka.core.KafkaTemplate
 import spock.lang.Specification
 

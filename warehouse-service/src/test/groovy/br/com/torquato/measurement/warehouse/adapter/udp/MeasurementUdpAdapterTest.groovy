@@ -1,11 +1,11 @@
-package br.com.torquato.sensors.warehouse.adapter.udp
+package br.com.torquato.measurement.warehouse.adapter.udp
 
-import br.com.torquato.sensors.schema.MalformedMeasurementEvent
-import br.com.torquato.sensors.schema.MeasurementEvent
-import br.com.torquato.sensors.schema.MeasurementType
-import br.com.torquato.sensors.warehouse.adapter.mapper.MalformedMeasurementEventMapper
-import br.com.torquato.sensors.warehouse.adapter.mapper.MeasurementEventMapper
-import br.com.torquato.sensors.warehouse.port.MeasurementEventRecipient
+
+import br.com.torquato.measurement.schema.MalformedMeasurementEvent
+import br.com.torquato.measurement.schema.MeasurementEvent
+import br.com.torquato.measurement.schema.MeasurementType
+import br.com.torquato.measurement.warehouse.adapter.mapper.MalformedMeasurementEventMapper
+import br.com.torquato.measurement.warehouse.adapter.mapper.MeasurementEventMapper
 import org.springframework.messaging.Message
 import spock.lang.Specification
 
@@ -15,13 +15,13 @@ class MeasurementUdpAdapterTest extends Specification {
 
     MeasurementEventMapper eventMapper
     MalformedMeasurementEventMapper malformedEventMapper
-    MeasurementEventRecipient messageRecipient
+    br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient messageRecipient
     MeasurementUdpAdapter adapter
 
     def setup() {
         eventMapper = Stub()
         malformedEventMapper = Stub()
-        messageRecipient = Mock(MeasurementEventRecipient)
+        messageRecipient = Mock(br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient)
         adapter = new MeasurementUdpAdapter(eventMapper, malformedEventMapper, messageRecipient)
     }
 

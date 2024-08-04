@@ -1,4 +1,4 @@
-package br.com.torquato.sensors.warehouse;
+package br.com.torquato.measurement.warehouse;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

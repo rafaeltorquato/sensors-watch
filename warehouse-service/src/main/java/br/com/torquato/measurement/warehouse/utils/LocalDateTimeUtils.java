@@ -1,4 +1,4 @@
-package br.com.torquato.sensors.warehouse.utils;
+package br.com.torquato.measurement.warehouse.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

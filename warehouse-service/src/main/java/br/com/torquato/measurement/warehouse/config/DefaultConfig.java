@@ -1,4 +1,4 @@
-package br.com.torquato.sensors.warehouse.config;
+package br.com.torquato.measurement.warehouse.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
