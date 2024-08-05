@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.VirtualThreadTaskExecutor;
 
 @Configuration
 public class ApplicationEventConfig {
@@ -14,10 +14,7 @@ public class ApplicationEventConfig {
     public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
         final SimpleApplicationEventMulticaster eventMulticaster =
                 new SimpleApplicationEventMulticaster();
-
-        final SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
-        taskExecutor.setVirtualThreads(true);
-        eventMulticaster.setTaskExecutor(taskExecutor);
+        eventMulticaster.setTaskExecutor(new VirtualThreadTaskExecutor("apvt"));
         return eventMulticaster;
     }
 
