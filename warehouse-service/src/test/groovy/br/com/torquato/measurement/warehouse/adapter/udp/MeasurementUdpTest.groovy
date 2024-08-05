@@ -6,22 +6,23 @@ import br.com.torquato.measurement.schema.MeasurementEvent
 import br.com.torquato.measurement.schema.MeasurementType
 import br.com.torquato.measurement.warehouse.adapter.mapper.MalformedMeasurementEventMapper
 import br.com.torquato.measurement.warehouse.adapter.mapper.MeasurementEventMapper
+import br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient
 import org.springframework.messaging.Message
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class MeasurementUdpAdapterTest extends Specification {
+class MeasurementUdpTest extends Specification {
 
     MeasurementEventMapper eventMapper
     MalformedMeasurementEventMapper malformedEventMapper
-    br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient messageRecipient
+    MeasurementEventRecipient messageRecipient
     MeasurementUdp adapter
 
     def setup() {
         eventMapper = Stub()
         malformedEventMapper = Stub()
-        messageRecipient = Mock(br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient)
+        messageRecipient = Mock(MeasurementEventRecipient)
         adapter = new MeasurementUdp(eventMapper, malformedEventMapper, messageRecipient)
     }
 

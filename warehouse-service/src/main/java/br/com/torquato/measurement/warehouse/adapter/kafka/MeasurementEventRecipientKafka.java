@@ -30,8 +30,9 @@ public class MeasurementEventRecipientKafka implements MeasurementEventRecipient
     @Override
     public void send(final MalformedMeasurementEvent event) {
         // Ensure that events from same warehouse will be processed like a queue
+        final String messageKey = event.warehouseId();
         final String topic = "malformed-measurements-data";
-        this.kafkaTemplate.send(topic, event.warehouseId(), event);
+        this.kafkaTemplate.send(topic, messageKey, event);
         log.info("{} sent to topic {}.", event, topic);
     }
 }

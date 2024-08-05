@@ -2,6 +2,8 @@ package br.com.torquato.measurement.warehouse.adapter.mapper
 
 
 import br.com.torquato.measurement.schema.MeasurementType
+import br.com.torquato.measurement.warehouse.config.Configurations
+import br.com.torquato.measurement.warehouse.utils.LocalDateTimeUtils
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
 import spock.lang.Specification
@@ -25,7 +27,7 @@ class MeasurementEventMapperTest extends Specification {
         mockedLocalDateTimeSupplier = Stub()
         mockedUuidSupplier = Stub()
 
-        def mockedConfigurations = Stub(br.com.torquato.measurement.warehouse.config.Configurations)
+        def mockedConfigurations = Stub(Configurations)
         mockedConfigurations.warehouseId >> 'default'
         mapper = new MeasurementEventMapper(
                 mockedConfigurations,
@@ -72,7 +74,7 @@ class MeasurementEventMapperTest extends Specification {
         evt.sensorId() == sensorId
         evt.warehouseId() == 'default'
         evt.type() == type
-        evt.moment() == br.com.torquato.measurement.warehouse.utils.LocalDateTimeUtils.toLocalDateTime(timestamp)
+        evt.moment() == LocalDateTimeUtils.toLocalDateTime(timestamp)
 
         where:
         type                        | sensorId | value

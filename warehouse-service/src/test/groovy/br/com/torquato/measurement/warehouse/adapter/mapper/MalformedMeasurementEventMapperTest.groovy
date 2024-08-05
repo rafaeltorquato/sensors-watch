@@ -2,6 +2,7 @@ package br.com.torquato.measurement.warehouse.adapter.mapper
 
 
 import br.com.torquato.measurement.schema.MeasurementType
+import br.com.torquato.measurement.warehouse.config.Configurations
 import br.com.torquato.measurement.warehouse.utils.LocalDateTimeUtils
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
@@ -27,7 +28,7 @@ class MalformedMeasurementEventMapperTest extends Specification {
         mockedLocalDateTimeSupplier = Stub();
         mockedUuidSupplier = Stub();
 
-        def mockedConfigurations = Stub(br.com.torquato.measurement.warehouse.config.Configurations)
+        def mockedConfigurations = Stub(Configurations)
         mockedConfigurations.warehouseId >> 'default'
         mapper = new MalformedMeasurementEventMapper(
                 mockedConfigurations,

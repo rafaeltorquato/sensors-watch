@@ -35,17 +35,21 @@ public class MeasurementUdp {
         final MeasurementEvent event;
         try {
             event = this.eventMapper.from(message, type);
-        } catch (Exception e) {
-            log.error("Malformed %s measurement event.".formatted(type) , e);
-            final MalformedMeasurementEvent malformedEvent = this.malformedEventMapper.from(
-                    message,
-                    type
-            );
-            this.messageRecipient.send(malformedEvent);
+        } catch (IllegalArgumentException e) {
+            log.error("Malformed %s measurement event.".formatted(type), e);
+            sendMalformedEvent(message, type);
             return;
         }
         log.info("{}", event);
         this.messageRecipient.send(event);
+    }
+
+    private void sendMalformedEvent(Message<byte[]> message, MeasurementType type) {
+        final MalformedMeasurementEvent malformedEvent = this.malformedEventMapper.from(
+                message,
+                type
+        );
+        this.messageRecipient.send(malformedEvent);
     }
 
 }

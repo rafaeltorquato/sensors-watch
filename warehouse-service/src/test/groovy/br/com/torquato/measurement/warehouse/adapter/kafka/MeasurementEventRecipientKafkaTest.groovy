@@ -9,7 +9,7 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 
-class MeasurementEventRecipientKafkaAdapterTest extends Specification {
+class MeasurementEventRecipientKafkaTest extends Specification {
 
     KafkaTemplate<String, Object> mockedKafkaTemplate
     MeasurementEventRecipientKafka recipient
