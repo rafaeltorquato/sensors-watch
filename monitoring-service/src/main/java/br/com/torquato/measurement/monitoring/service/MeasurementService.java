@@ -27,15 +27,17 @@ public class MeasurementService {
         final MeasurementThreshold threshold = this.thresholdRepository.getByType(event.type())
                 .orElseThrow();
         ensureIdempotence(event);
-        if (event.value() > threshold.getValue()) {
-            final MeasurementAlertEvent alertEvent = new MeasurementAlertEvent(
-                    UUID.randomUUID().toString(),
-                    event,
-                    LocalDateTime.now(),
-                    threshold.getValue()
-            );
-            this.alertEventRecipient.send(alertEvent);
+        if (event.value() <= threshold.getValue()) {
+            return;
         }
+
+        final MeasurementAlertEvent alertEvent = new MeasurementAlertEvent(
+                UUID.randomUUID().toString(),
+                event,
+                LocalDateTime.now(),
+                threshold.getValue()
+        );
+        this.alertEventRecipient.send(alertEvent);
     }
 
     private void ensureIdempotence(MeasurementEvent event) {

@@ -38,4 +38,5 @@ public class KafkaConfig {
     public DefaultKafkaProducerFactoryCustomizer kafkaProducerFactoryCustomizer(ObjectMapper objectMapper) {
         return producerFactory -> producerFactory.setValueSerializer(new JsonSerializer<>(objectMapper));
     }
+
 }

@@ -1,6 +1,5 @@
 package br.com.torquato.measurement.monitoring.adapter.jdbc;
 
-import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException;
 import br.com.torquato.measurement.monitoring.domain.ProcessedEvent;
 import br.com.torquato.measurement.monitoring.domain.ProcessedEventRepository;
 import lombok.RequiredArgsConstructor;

@@ -30,5 +30,6 @@ spring:
       group-id: "${spring.application.name}-group"
       properties:
         spring.json.trusted.packages: "br.com.torquato.measurement.schema"
+      auto-offset-reset: earliest
     listener:
       concurrency: 3

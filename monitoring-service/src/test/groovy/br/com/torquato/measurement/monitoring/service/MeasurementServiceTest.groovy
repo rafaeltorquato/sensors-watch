@@ -1,10 +1,6 @@
 package br.com.torquato.measurement.monitoring.service
 
-import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException
-import br.com.torquato.measurement.monitoring.domain.MeasurementThreshold
-import br.com.torquato.measurement.monitoring.domain.MeasurementThresholdRepository
-import br.com.torquato.measurement.monitoring.domain.ProcessedEvent
-import br.com.torquato.measurement.monitoring.domain.ProcessedEventRepository
+import br.com.torquato.measurement.monitoring.domain.*
 import br.com.torquato.measurement.monitoring.port.MeasurementAlertEventRecipient
 import br.com.torquato.measurement.schema.MeasurementEvent
 import br.com.torquato.measurement.schema.MeasurementType
