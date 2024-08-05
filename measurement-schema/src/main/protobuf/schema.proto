@@ -1,0 +1,33 @@
+syntax = "proto2";
+package protobuf;
+option java_package = "br.com.torquato.measurements.schema";
+option java_outer_classname = "Schema";
+
+enum MeasurementType{
+  TEMPERATURE = 0;
+  HUMIDITY = 1;
+}
+
+message MeasurementEvent {
+  required string id = 1;
+  required string warehouseId = 2;
+  required string sensorId = 3;
+  required int32 value = 4;
+  required MeasurementEvent type = 5;
+  required int64 moment = 6;
+}
+
+message MeasurementAlertEvent {
+  required string id = 1;
+  required MeasurementEvent sourceEvent = 2;
+  required int64 moment = 3;
+  required int32 threshold = 4;
+}
+
+message MalformedMeasurementAlertEvent {
+  required string id = 1;
+  required string warehouseId = 2;
+  required MeasurementEvent type = 3;
+  required int64 moment = 4;
+  required bytes payload = 5;
+}
