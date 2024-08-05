@@ -14,7 +14,7 @@ public class ApplicationEventConfig {
     public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
         final SimpleApplicationEventMulticaster eventMulticaster =
                 new SimpleApplicationEventMulticaster();
-        eventMulticaster.setTaskExecutor(new VirtualThreadTaskExecutor("apvt"));
+        eventMulticaster.setTaskExecutor(new VirtualThreadTaskExecutor("appevent-vt"));
         return eventMulticaster;
     }
 
