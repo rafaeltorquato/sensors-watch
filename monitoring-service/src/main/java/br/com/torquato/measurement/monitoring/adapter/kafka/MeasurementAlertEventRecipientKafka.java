@@ -1,10 +1,12 @@
 package br.com.torquato.measurement.monitoring.adapter.kafka;
 
+import br.com.torquato.measurement.monitoring.domain.UnprocessedEvent;
 import br.com.torquato.measurement.monitoring.port.MeasurementAlertEventRecipient;
 import br.com.torquato.measurement.schema.MeasurementAlertEvent;
 import br.com.torquato.measurement.schema.MeasurementEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MeasurementAlertEventRecipientKafka implements MeasurementAlertEventRecipient {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
@@ -24,7 +27,12 @@ public class MeasurementAlertEventRecipientKafka implements MeasurementAlertEven
         };
         // Ensure that events from same warehouse and sensor will be processed like a queue
         final String messageKey = sourceEvent.warehouseId() + "-" + sourceEvent.sensorId();
-        this.kafkaTemplate.send(topic, messageKey, alertEvent);
-        log.info("{} sent to topic {}.", alertEvent, topic);
+        var future = this.kafkaTemplate.send(topic, messageKey, alertEvent);
+        future.whenCompleteAsync((stringObjectSendResult, throwable) -> {
+            if(throwable != null) {
+                log.error("Cannot send measurement alert event.", throwable);
+                this.eventPublisher.publishEvent(new UnprocessedEvent(sourceEvent.id()));
+            }
+        });
     }
 }

@@ -18,7 +18,7 @@ class MeasurementServiceTest extends Specification {
 
     def setup() {
         mockedThresholdRepository = Stub()
-        mockedProcessedEventRepository = Stub()
+        mockedProcessedEventRepository = Mock()
         mockedAlertEventRecipient = Mock()
 
         service = new MeasurementService(
@@ -155,6 +155,66 @@ class MeasurementServiceTest extends Specification {
         type                        | threshold | value
         MeasurementType.HUMIDITY    | 50        | 51
         MeasurementType.TEMPERATURE | 35        | 36
+    }
+
+    def "Should delete processed event"() {
+        given:
+        def eventId = "1"
+        def event = new MeasurementEvent(
+                eventId,
+                "w1",
+                "s1",
+                51,
+                MeasurementType.HUMIDITY,
+                LocalDateTime.now()
+        )
+        mockedThresholdRepository.getByType(MeasurementType.HUMIDITY) >> {
+            Optional.of(new MeasurementThreshold(
+                    (short) 1,
+                    MeasurementType.HUMIDITY,
+                    50
+            ))
+        }
+        mockedAlertEventRecipient.send(_) >> {
+            throw new RuntimeException("Mocked Exception")
+        }
+
+        when:
+        service.handle(event)
+
+        then:
+        thrown(RuntimeException)
+        1 * mockedProcessedEventRepository.delete(_)
+    }
+
+    def "Should handle unprocessed event"() {
+        given:
+        def eventId = "1"
+        def event = new MeasurementEvent(
+                eventId,
+                "w1",
+                "s1",
+                50,
+                MeasurementType.HUMIDITY,
+                LocalDateTime.now()
+        )
+        mockedThresholdRepository.getByType(MeasurementType.HUMIDITY) >> {
+            Optional.of(new MeasurementThreshold(
+                    (short) 1,
+                    MeasurementType.HUMIDITY,
+                    40
+            ))
+        }
+        mockedAlertEventRecipient.send(_) >> {
+            throw new RuntimeException("Mocked Exception")
+        }
+
+        when:
+        service.handleUnprocessed(new UnprocessedEvent(eventId))
+
+        then:
+        1 * mockedProcessedEventRepository.delete(_)
+
     }
 
 }

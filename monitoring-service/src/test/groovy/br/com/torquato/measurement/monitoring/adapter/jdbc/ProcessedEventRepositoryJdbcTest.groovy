@@ -39,4 +39,19 @@ class ProcessedEventRepositoryJdbcTest extends Specification {
         thrown(DuplicateKeyException)
     }
 
+    def "Should call delete success"() {
+        given:
+        def processedEvent = new ProcessedEvent("1")
+        mockedJdbcTemplate.update(_ as String, processedEvent.eventId()) >> result
+
+        when:
+        repositoryJdbc.delete(processedEvent)
+
+        then:
+        true
+
+        where:
+        result << [0, 1]
+    }
+
 }
