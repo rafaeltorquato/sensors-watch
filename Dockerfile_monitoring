@@ -6,7 +6,8 @@ RUN cd /measurement-schema && mvn clean install
 
 RUN mkdir /warehouse-service
 COPY monitoring-service /monitoring-service/.
-RUN cd /monitoring-service && mvn clean install
+#skip integration tests because it needs dind (Docker in Docker) image
+RUN cd /monitoring-service && mvn clean install -DskipITs
 
 FROM amazoncorretto:21
 COPY --from=build /monitoring-service/target/*.jar /app.jar
