@@ -45,9 +45,9 @@ class MeasurementAlertEventRecipientKafkaTest extends Specification {
 
         def future = Stub(CompletableFuture<SendResult<String, Object>>)
         AtomicReference<BiConsumer<?, ?>> biConsumerRef = new AtomicReference<>()
-        future.whenCompleteAsync(_) >> { List args -> biConsumerRef.set(args[0] as BiConsumer<?, ?>) }
+        future.whenCompleteAsync(_ as BiConsumer) >> { List args -> biConsumerRef.set(args[0] as BiConsumer<?, ?>) }
 
-        mockedKafkaTemplate.send(topic, _, alertEvent) >> future
+        mockedKafkaTemplate.send(topic, _ as String, alertEvent) >> future
 
         when:
         recipient.send(alertEvent)
@@ -81,9 +81,9 @@ class MeasurementAlertEventRecipientKafkaTest extends Specification {
                 .build()
         def future = Stub(CompletableFuture<SendResult<String, Object>>)
         AtomicReference<BiConsumer<?, ?>> biConsumerRef = new AtomicReference<>()
-        future.whenCompleteAsync(_) >> { List args -> biConsumerRef.set(args[0] as BiConsumer<?, ?>) }
+        future.whenCompleteAsync(_ as BiConsumer) >> { List args -> biConsumerRef.set(args[0] as BiConsumer<?, ?>) }
 
-        mockedKafkaTemplate.send(topic, _, alertEvent) >> future
+        mockedKafkaTemplate.send(topic, _ as String, alertEvent) >> future
 
         when:
         recipient.send(alertEvent)

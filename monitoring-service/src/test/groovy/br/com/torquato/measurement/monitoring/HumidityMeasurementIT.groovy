@@ -46,12 +46,12 @@ class HumidityMeasurementIT extends ITSupport {
         producer.send(new ProducerRecord<>("humidity-measurements-data", measurementEvent))
         producer.flush()
         def records = KafkaTestUtils.getRecords(consumer)
-        def alertEvent = records.iterator()
-                *.value()
-                .find { it.getSourceEvent().getId() == measurementEvent.getId() }
 
         then: 'An alert exists'
-        alertEvent.getSourceEvent() == measurementEvent
+        records.iterator()
+                *.value()
+                *.getSourceEvent()
+                .find { it.getId() == measurementEvent.getId() } == measurementEvent
     }
 
 }

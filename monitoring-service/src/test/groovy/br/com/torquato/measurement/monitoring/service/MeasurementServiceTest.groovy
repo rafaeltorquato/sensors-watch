@@ -51,7 +51,7 @@ class MeasurementServiceTest extends Specification {
         1 * mockedAlertEventRecipient.send(_)
 
         where:
-        type                        | threshold | value
+        type                               | threshold | value
         Schema.MeasurementType.HUMIDITY    | 50        | 51
         Schema.MeasurementType.TEMPERATURE | 35        | 36
     }
@@ -82,7 +82,7 @@ class MeasurementServiceTest extends Specification {
         0 * mockedAlertEventRecipient.send(_)
 
         where:
-        type                        | threshold | value
+        type                               | threshold | value
         Schema.MeasurementType.HUMIDITY    | 50        | 50
         Schema.MeasurementType.HUMIDITY    | 50        | 49
         Schema.MeasurementType.TEMPERATURE | 35        | 35
@@ -115,7 +115,7 @@ class MeasurementServiceTest extends Specification {
         1 * mockedAlertEventRecipient.send(_)
 
         where:
-        type                        | threshold | value
+        type                               | threshold | value
         Schema.MeasurementType.HUMIDITY    | 50        | 51
         Schema.MeasurementType.TEMPERATURE | 35        | 36
     }
@@ -172,7 +172,7 @@ class MeasurementServiceTest extends Specification {
                     50
             ))
         }
-        mockedAlertEventRecipient.send(_) >> {
+        mockedAlertEventRecipient.send(_ as Schema.MeasurementAlertEvent) >> {
             throw new RuntimeException("Mocked Exception")
         }
 
@@ -187,14 +187,6 @@ class MeasurementServiceTest extends Specification {
     def "Should handle unprocessed event"() {
         given:
         def eventId = "1"
-        def event = Schema.MeasurementEvent.newBuilder()
-                .setId(eventId)
-                .setWarehouseId("w01")
-                .setSensorId("s01")
-                .setValue(50)
-                .setType(Schema.MeasurementType.HUMIDITY)
-                .setMoment(System.currentTimeMillis())
-                .build()
         mockedThresholdRepository.getByType(Schema.MeasurementType.HUMIDITY) >> {
             Optional.of(new MeasurementThreshold(
                     (short) 1,
@@ -202,7 +194,7 @@ class MeasurementServiceTest extends Specification {
                     40
             ))
         }
-        mockedAlertEventRecipient.send(_) >> {
+        mockedAlertEventRecipient.send(_ as Schema.MeasurementAlertEvent) >> {
             throw new RuntimeException("Mocked Exception")
         }
 
