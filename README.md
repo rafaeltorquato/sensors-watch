@@ -64,16 +64,26 @@ Having problems? The command below can help, **but it will delete all your conta
 docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
 ````
 
-### Send a Temperature Event
+### Send a Temperature Event that raises the alarm
 
 ````shell
 echo "sensor_id=temp1;value=36" | nc -u localhost 3344
 ````
+### Send a Temperature Event that not raises the alarm
 
-### Send a Humidity Event
+````shell
+echo "sensor_id=temp1;value=35" | nc -u localhost 3344
+````
+
+### Send a Humidity Event that raises the alarm
 
 ````shell
 echo "sensor_id=hum1;value=51" | nc -u localhost 3345
+````
+### Send a Humidity Event that not raises the alarm
+
+````shell
+echo "sensor_id=hum1;value=50" | nc -u localhost 3345
 ````
 
 ## Run tests
