@@ -74,7 +74,7 @@ class MeasurementUdpTest extends Specification {
         def event = Schema.MeasurementEvent.newBuilder()
                 .setId("1")
                 .setWarehouseId("w01")
-                .setSensorId("s01")
+                .setSensorId("s02")
                 .setValue(30)
                 .setType(Schema.MeasurementType.TEMPERATURE)
                 .setMoment(System.currentTimeMillis())

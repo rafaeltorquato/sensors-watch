@@ -40,15 +40,14 @@ class HumiditySensorIT extends ITSupport {
         this.consumer.subscribe(["humidity-measurements-data"])
         def records = KafkaTestUtils.getRecords(this.consumer)
 
-        then: 'Kafka topic humidity-measurements-data has both messages'
+        then: 'Kafka topic humidity-measurements-data have both messages'
+        records.count() == 2
         records.iterator()
                 *.value()
-                *.getSensorId()
-                .containsAll(["h1", "h2"])
+                .find { it -> it.sensorId == 'h1' && it.value == 50 } != null
         records.iterator()
                 *.value()
-                *.getValue()
-                .containsAll([50, 51])
+                .find { it -> it.sensorId == 'h2' && it.value == 51 } != null
 
     }
 

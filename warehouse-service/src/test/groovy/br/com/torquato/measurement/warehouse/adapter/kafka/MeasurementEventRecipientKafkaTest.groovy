@@ -1,10 +1,13 @@
 package br.com.torquato.measurement.warehouse.adapter.kafka
 
-
 import br.com.torquato.measurements.schema.Schema
 import com.google.protobuf.ByteString
 import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.support.SendResult
 import spock.lang.Specification
+
+import java.util.concurrent.CompletableFuture
+import java.util.function.BiConsumer
 
 class MeasurementEventRecipientKafkaTest extends Specification {
 
@@ -12,7 +15,7 @@ class MeasurementEventRecipientKafkaTest extends Specification {
     MeasurementEventRecipientKafka recipient
 
     def setup() {
-        mockedKafkaTemplate = Mock()
+        mockedKafkaTemplate = Stub()
         recipient = new MeasurementEventRecipientKafka(mockedKafkaTemplate)
     }
 
@@ -27,12 +30,14 @@ class MeasurementEventRecipientKafkaTest extends Specification {
                 .setMoment(System.currentTimeMillis())
                 .build()
 
+        def future = Mock(CompletableFuture<SendResult<String, Object>>)
+        mockedKafkaTemplate.send(topic, _ as String, event) >> future
 
         when:
         recipient.send(event)
 
         then:
-        1 * mockedKafkaTemplate.send(_, _, event)
+        1 * future.whenCompleteAsync(_ as BiConsumer)
 
         where:
         type                               | topic
@@ -46,15 +51,22 @@ class MeasurementEventRecipientKafkaTest extends Specification {
         def malformedEvent = Schema.MalformedMeasurementEvent.newBuilder()
                 .setId("1")
                 .setWarehouseId("1")
-                .setType(Schema.MeasurementType.HUMIDITY)
+                .setType(type as Schema.MeasurementType)
                 .setMoment(System.currentTimeMillis())
                 .setPayload(ByteString.copyFromUtf8("sensor_id;value"))
-                .build();
+                .build()
+
+        def future = Mock(CompletableFuture<SendResult<String, Object>>)
+        mockedKafkaTemplate.send("malformed-measurements-data", _ as String, malformedEvent) >> future
 
         when:
         recipient.send(malformedEvent)
 
-        then:
-        1 * mockedKafkaTemplate.send("malformed-measurements-data", _, malformedEvent)
+        then: 'Kafka send it'
+        1 * future.whenCompleteAsync(_ as BiConsumer)
+
+        where:
+        type << Schema.MeasurementType.values()
     }
+
 }

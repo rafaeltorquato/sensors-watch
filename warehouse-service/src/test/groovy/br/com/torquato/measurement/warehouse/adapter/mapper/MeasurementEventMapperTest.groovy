@@ -46,7 +46,6 @@ class MeasurementEventMapperTest extends Specification {
         mapper.from(mockedMessage, Schema.MeasurementType.TEMPERATURE)
 
         then:
-
         thrown(IllegalArgumentException)
 
         where:

@@ -22,7 +22,13 @@ public class MeasurementEventRecipientKafka implements MeasurementEventRecipient
         };
         // Ensure that events from same warehouse and sensor will be processed like a queue
         final String messageKey = event.getWarehouseId() + "-" + event.getSensorId();
-        this.kafkaTemplate.send(topic, messageKey, event);
+        this.kafkaTemplate.send(topic, messageKey, event)
+                .whenCompleteAsync((stringObjectSendResult, throwable) -> {
+                    if (throwable != null) {
+                        //TODO A fallback here
+                        log.error("Error sending %s to topic %s".formatted(event, topic), throwable);
+                    }
+                });
         log.info("{} sent to topic {}.", event, topic);
     }
 
@@ -31,7 +37,13 @@ public class MeasurementEventRecipientKafka implements MeasurementEventRecipient
         // Ensure that events from same warehouse will be processed like a queue
         final String messageKey = event.getWarehouseId();
         final String topic = "malformed-measurements-data";
-        this.kafkaTemplate.send(topic, messageKey, event);
+        this.kafkaTemplate.send(topic, messageKey, event)
+                .whenCompleteAsync((stringObjectSendResult, throwable) -> {
+                    if (throwable != null) {
+                        //TODO A fallback here
+                        log.error("Error sending %s to topic %s".formatted(event, topic), throwable);
+                    }
+                });
         log.info("{} sent to topic {}.", event, topic);
     }
 }

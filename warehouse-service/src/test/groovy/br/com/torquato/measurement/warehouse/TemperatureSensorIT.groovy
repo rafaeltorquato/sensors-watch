@@ -37,14 +37,13 @@ class TemperatureSensorIT extends ITSupport {
         this.consumer.subscribe(["temperature-measurements-data"])
         def records = KafkaTestUtils.getRecords(this.consumer)
 
-        then: 'Kafka topic temperature-measurements-data has both messages'
+        then: 'Kafka topic temperature-measurements-data have both messages'
+        records.count() == 2
         records.iterator()
                 *.value()
-                *.getSensorId()
-                .containsAll(["t1", "t2"])
+                .find { it -> it.sensorId == 't1' && it.value == 40 } != null
         records.iterator()
                 *.value()
-                *.getValue()
-                .containsAll([40, 45])
+                .find { it -> it.sensorId == 't2' && it.value == 45 } != null
     }
 }

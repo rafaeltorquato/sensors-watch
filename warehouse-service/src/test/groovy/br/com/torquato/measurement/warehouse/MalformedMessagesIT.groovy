@@ -44,17 +44,21 @@ class MalformedMessagesIT extends ITSupport {
         this.consumer.subscribe(["malformed-measurements-data"])
         def records = KafkaTestUtils.getRecords(this.consumer)
 
-        then: 'Kafka topic malformed-measurements-data has both messages'
+        then: 'Kafka topic malformed-measurements-data have both messages'
         records.count() == 2
         records.iterator()
                 *.value()
-                *.getType().containsAll(Schema.MeasurementType.values())
+                .find { it ->
+                    it.type == Schema.MeasurementType.HUMIDITY &&
+                            it.payload.toString(StandardCharsets.UTF_8) == payload1
+                } != null
+
         records.iterator()
                 *.value()
-                *.getPayload()
-                *.toString(StandardCharsets.UTF_8)
-                .containsAll([payload1, payload2])
-
+                .find { it ->
+                    it.type == Schema.MeasurementType.TEMPERATURE &&
+                            it.payload.toString(StandardCharsets.UTF_8) == payload2
+                } != null
 
     }
 }
