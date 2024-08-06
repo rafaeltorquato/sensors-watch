@@ -6,19 +6,19 @@ import br.com.torquato.measurements.schema.Schema
 import org.springframework.dao.DuplicateKeyException
 import spock.lang.Specification
 
-class MeasurementServiceTest extends Specification {
+class ThresholdMonitoringServiceTest extends Specification {
 
     MeasurementThresholdRepository mockedThresholdRepository
     ProcessedEventRepository mockedProcessedEventRepository
     MeasurementAlertEventRecipient mockedAlertEventRecipient
-    MeasurementService service
+    ThresholdMonitoringService service
 
     def setup() {
         mockedThresholdRepository = Stub()
         mockedProcessedEventRepository = Mock()
         mockedAlertEventRecipient = Mock()
 
-        service = new MeasurementService(
+        service = new ThresholdMonitoringService(
                 mockedThresholdRepository,
                 mockedProcessedEventRepository,
                 mockedAlertEventRecipient

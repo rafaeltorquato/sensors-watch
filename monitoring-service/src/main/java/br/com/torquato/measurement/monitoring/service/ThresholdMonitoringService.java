@@ -14,7 +14,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MeasurementService {
+public class ThresholdMonitoringService {
 
     private final MeasurementThresholdRepository thresholdRepository;
     private final ProcessedEventRepository processedEventRepository;

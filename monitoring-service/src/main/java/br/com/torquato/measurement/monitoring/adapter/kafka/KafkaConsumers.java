@@ -1,7 +1,7 @@
 package br.com.torquato.measurement.monitoring.adapter.kafka;
 
 import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException;
-import br.com.torquato.measurement.monitoring.service.MeasurementService;
+import br.com.torquato.measurement.monitoring.service.ThresholdMonitoringService;
 import br.com.torquato.measurements.schema.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaConsumers {
 
-    private final MeasurementService measurementService;
+    private final ThresholdMonitoringService monitoringService;
 
     @RetryableTopic(
             backoff = @Backoff(delay = 1000, multiplier = 2.0),
@@ -26,7 +26,7 @@ public class KafkaConsumers {
     @KafkaListener(topics = {"temperature-measurements-data", "humidity-measurements-data"})
     public void handleMeasurementEvent(final ConsumerRecord<String, Schema.MeasurementEvent> record) {
         try {
-            measurementService.handle(record.value());
+            monitoringService.handle(record.value());
         } catch (DuplicatedEventException e) {
             log.info("{}", e.getMessage());
         }
