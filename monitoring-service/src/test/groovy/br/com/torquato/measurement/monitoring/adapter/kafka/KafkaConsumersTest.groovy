@@ -2,9 +2,7 @@ package br.com.torquato.measurement.monitoring.adapter.kafka
 
 import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException
 import br.com.torquato.measurement.monitoring.service.MeasurementService
-import br.com.torquato.measurement.schema.MalformedMeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementAlertEvent
-import br.com.torquato.measurement.schema.MeasurementEvent
+import br.com.torquato.measurements.schema.Schema
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import spock.lang.Specification
 
@@ -14,7 +12,7 @@ class KafkaConsumersTest extends Specification {
         given:
         def mockedMeasurementService = Mock(MeasurementService)
         def consumers = new KafkaConsumers(mockedMeasurementService)
-        ConsumerRecord<String, MeasurementEvent> record = Mock()
+        ConsumerRecord<String, Schema.MeasurementEvent> record = Mock()
 
         when:
         consumers.handleMeasurementEvent(record)
@@ -28,7 +26,7 @@ class KafkaConsumersTest extends Specification {
         given:
         def mockedMeasurementService = Stub(MeasurementService)
         def consumers = new KafkaConsumers(mockedMeasurementService)
-        ConsumerRecord<String, MeasurementEvent> record = Mock()
+        ConsumerRecord<String, Schema.MeasurementEvent> record = Mock()
 
         mockedMeasurementService.handle(_) >> {
             throw new DuplicatedEventException("Mocked Exception!")
@@ -44,7 +42,7 @@ class KafkaConsumersTest extends Specification {
     def "Should call measurementService.handleAlertEvent with success"() {
         given:
         def consumers = new KafkaConsumers(Mock(MeasurementService))
-        ConsumerRecord<String, MeasurementAlertEvent> record = Mock()
+        ConsumerRecord<String, Schema.MeasurementAlertEvent> record = Mock()
 
         when:
         consumers.handleAlertEvent(record)
@@ -56,7 +54,7 @@ class KafkaConsumersTest extends Specification {
     def "Should call measurementService.handleMalformedEvent with success"() {
         given:
         def consumers = new KafkaConsumers(Mock(MeasurementService))
-        ConsumerRecord<String, MalformedMeasurementEvent> record = Mock()
+        ConsumerRecord<String, Schema.MalformedMeasurementEvent> record = Mock()
 
         when:
         consumers.handleMalformedEvent(record)

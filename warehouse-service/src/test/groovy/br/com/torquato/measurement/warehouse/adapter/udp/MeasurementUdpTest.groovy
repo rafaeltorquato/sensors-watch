@@ -1,16 +1,13 @@
 package br.com.torquato.measurement.warehouse.adapter.udp
 
 
-import br.com.torquato.measurement.schema.MalformedMeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementType
 import br.com.torquato.measurement.warehouse.adapter.mapper.MalformedMeasurementEventMapper
 import br.com.torquato.measurement.warehouse.adapter.mapper.MeasurementEventMapper
 import br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient
+import br.com.torquato.measurements.schema.Schema
+import com.google.protobuf.ByteString
 import org.springframework.messaging.Message
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class MeasurementUdpTest extends Specification {
 
@@ -29,18 +26,18 @@ class MeasurementUdpTest extends Specification {
     def "Should handle a malformed event properly"() {
         given:
         def message = Stub(Message<byte[]>)
-        def malformedEvent = new MalformedMeasurementEvent(
-                "1",
-                "w01",
-                MeasurementType.HUMIDITY,
-                LocalDateTime.now(),
-                "sensor_id;value"
-        )
+        def malformedEvent = Schema.MalformedMeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setType(Schema.MeasurementType.HUMIDITY)
+                .setMoment(System.currentTimeMillis())
+                .setPayload(ByteString.copyFromUtf8("sensor_id;value"))
+                .build()
 
-        eventMapper.from(message, MeasurementType.HUMIDITY) >> {
+        eventMapper.from(message, Schema.MeasurementType.HUMIDITY) >> {
             throw new IllegalArgumentException("Mocked error")
         }
-        malformedEventMapper.from(message, MeasurementType.HUMIDITY) >> malformedEvent
+        malformedEventMapper.from(message, Schema.MeasurementType.HUMIDITY) >> malformedEvent
 
         when:
         adapter.handleHumidityMessage(message)
@@ -52,16 +49,16 @@ class MeasurementUdpTest extends Specification {
     def "Should process an UDP humidity message"() {
         given:
         def message = Stub(Message<byte[]>)
-        def event = new MeasurementEvent(
-                "1",
-                "w01",
-                "s01",
-                30,
-                MeasurementType.HUMIDITY,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(30)
+                .setType(Schema.MeasurementType.HUMIDITY)
+                .setMoment(System.currentTimeMillis())
+                .build()
 
-        eventMapper.from(message, MeasurementType.HUMIDITY) >> event
+        eventMapper.from(message, Schema.MeasurementType.HUMIDITY) >> event
 
         when:
         adapter.handleHumidityMessage(message)
@@ -74,16 +71,16 @@ class MeasurementUdpTest extends Specification {
     def "Should process an UDP temperature message"() {
         given:
         def message = Stub(Message<byte[]>)
-        def event = new MeasurementEvent(
-                "1",
-                "w01",
-                "s01",
-                30,
-                MeasurementType.TEMPERATURE,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(30)
+                .setType(Schema.MeasurementType.TEMPERATURE)
+                .setMoment(System.currentTimeMillis())
+                .build()
 
-        eventMapper.from(message, MeasurementType.TEMPERATURE) >> event
+        eventMapper.from(message, Schema.MeasurementType.TEMPERATURE) >> event
 
         when:
         adapter.handleTemperatureMessage(message)

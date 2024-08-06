@@ -13,7 +13,7 @@ message MeasurementEvent {
   required string warehouseId = 2;
   required string sensorId = 3;
   required int32 value = 4;
-  required MeasurementEvent type = 5;
+  required MeasurementType type = 5;
   required int64 moment = 6;
 }
 
@@ -24,10 +24,10 @@ message MeasurementAlertEvent {
   required int32 threshold = 4;
 }
 
-message MalformedMeasurementAlertEvent {
+message MalformedMeasurementEvent {
   required string id = 1;
   required string warehouseId = 2;
-  required MeasurementEvent type = 3;
+  required MeasurementType type = 3;
   required int64 moment = 4;
-  required bytes payload = 5;
+  optional bytes payload = 5;
 }

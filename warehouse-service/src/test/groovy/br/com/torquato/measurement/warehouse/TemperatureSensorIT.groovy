@@ -1,8 +1,9 @@
 package br.com.torquato.measurement.warehouse
 
-import br.com.torquato.measurement.schema.MeasurementEvent
+
 import br.com.torquato.measurement.warehouse.support.ITSupport
 import br.com.torquato.measurement.warehouse.support.UdpClient
+import br.com.torquato.measurements.schema.Schema
 import org.apache.kafka.clients.consumer.Consumer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.core.ConsumerFactory
@@ -12,12 +13,12 @@ class TemperatureSensorIT extends ITSupport {
 
     UdpClient temperatureClient
     @Autowired
-    ConsumerFactory<String, MeasurementEvent> consumerFactory
-    Consumer<String, MeasurementEvent> consumer
+    ConsumerFactory<String, Schema.MeasurementEvent> consumerFactory
+    Consumer<String, Schema.MeasurementEvent> consumer
 
     def setup() {
         temperatureClient = new UdpClient("localhost", 3344)
-        this.consumer = consumerFactory.createConsumer()
+        consumer = consumerFactory.createConsumer()
     }
 
     def cleanup() {
@@ -39,11 +40,11 @@ class TemperatureSensorIT extends ITSupport {
         then: 'Kafka topic temperature-measurements-data has both messages'
         records.iterator()
                 *.value()
-                *.sensorId()
+                *.getSensorId()
                 .containsAll(["t1", "t2"])
         records.iterator()
                 *.value()
-                *.value()
+                *.getValue()
                 .containsAll([40, 45])
     }
 }

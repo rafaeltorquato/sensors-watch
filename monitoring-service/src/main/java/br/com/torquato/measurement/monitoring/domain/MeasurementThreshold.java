@@ -1,6 +1,6 @@
 package br.com.torquato.measurement.monitoring.domain;
 
-import br.com.torquato.measurement.schema.MeasurementType;
+import br.com.torquato.measurements.schema.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MeasurementThreshold {
     private Short id;
-    private MeasurementType type;
+    private Schema.MeasurementType type;
     private Integer value;
 }

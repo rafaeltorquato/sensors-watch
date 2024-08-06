@@ -1,11 +1,9 @@
 package br.com.torquato.measurement.warehouse.adapter.udp;
 
-import br.com.torquato.measurement.schema.MalformedMeasurementEvent;
-import br.com.torquato.measurement.schema.MeasurementEvent;
-import br.com.torquato.measurement.schema.MeasurementType;
 import br.com.torquato.measurement.warehouse.adapter.mapper.MalformedMeasurementEventMapper;
 import br.com.torquato.measurement.warehouse.adapter.mapper.MeasurementEventMapper;
 import br.com.torquato.measurement.warehouse.port.MeasurementEventRecipient;
+import br.com.torquato.measurements.schema.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.annotation.MessageEndpoint;
@@ -23,20 +21,20 @@ public class MeasurementUdp {
 
     @ServiceActivator(inputChannel = "humidityInboundChannel")
     public void handleHumidityMessage(final Message<byte[]> message) {
-        handle(message, MeasurementType.HUMIDITY);
+        handle(message, Schema.MeasurementType.HUMIDITY);
     }
 
     @ServiceActivator(inputChannel = "temperatureInboundChannel")
     public void handleTemperatureMessage(final Message<byte[]> message) {
-        handle(message, MeasurementType.TEMPERATURE);
+        handle(message, Schema.MeasurementType.TEMPERATURE);
     }
 
-    private void handle(Message<byte[]> message, MeasurementType type) {
-        final MeasurementEvent event;
+    private void handle(Message<byte[]> message, Schema.MeasurementType type) {
+        final Schema.MeasurementEvent event;
         try {
             event = this.eventMapper.from(message, type);
         } catch (IllegalArgumentException e) {
-            log.error("Malformed %s measurement event.".formatted(type), e);
+            log.warn("Malformed %s measurement event.".formatted(type));
             sendMalformedEvent(message, type);
             return;
         }
@@ -44,8 +42,8 @@ public class MeasurementUdp {
         this.messageRecipient.send(event);
     }
 
-    private void sendMalformedEvent(Message<byte[]> message, MeasurementType type) {
-        final MalformedMeasurementEvent malformedEvent = this.malformedEventMapper.from(
+    private void sendMalformedEvent(Message<byte[]> message, Schema.MeasurementType type) {
+        final Schema.MalformedMeasurementEvent malformedEvent = this.malformedEventMapper.from(
                 message,
                 type
         );

@@ -1,9 +1,7 @@
 package br.com.torquato.measurement.monitoring
 
 import br.com.torquato.measurement.monitoring.support.ITSupport
-import br.com.torquato.measurement.schema.MeasurementAlertEvent
-import br.com.torquato.measurement.schema.MeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementType
+import br.com.torquato.measurements.schema.Schema
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -12,17 +10,15 @@ import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.test.utils.KafkaTestUtils
 
-import java.time.LocalDateTime
-
 class HumidityMeasurementIT extends ITSupport {
 
     @Autowired
-    ProducerFactory<String, MeasurementEvent> producerFactory
+    ProducerFactory<String, Schema.MeasurementEvent> producerFactory
     @Autowired
-    ConsumerFactory<String, MeasurementAlertEvent> consumerFactory
+    ConsumerFactory<String, Schema.MeasurementAlertEvent> consumerFactory
 
-    Producer<String, MeasurementEvent> producer
-    Consumer<String, MeasurementAlertEvent> consumer
+    Producer<String, Schema.MeasurementEvent> producer
+    Consumer<String, Schema.MeasurementAlertEvent> consumer
 
     def setup() {
         producer = producerFactory.createProducer()
@@ -36,14 +32,14 @@ class HumidityMeasurementIT extends ITSupport {
 
     def "Should consume a humidity alert event"() {
         given: 'A measurement event'
-        def measurementEvent = new MeasurementEvent(
-                UUID.randomUUID().toString(),
-                "w01",
-                "h01",
-                51,
-                MeasurementType.HUMIDITY,
-                LocalDateTime.now()
-        )
+        def measurementEvent = Schema.MeasurementEvent.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setWarehouseId("w01")
+                .setSensorId("h01")
+                .setValue(51)
+                .setType(Schema.MeasurementType.HUMIDITY)
+                .setMoment(System.currentTimeMillis())
+                .build()
         consumer.subscribe(["humidity-measurements-alert-data"])
 
         when: 'A humidity measurement is sent'
@@ -52,10 +48,10 @@ class HumidityMeasurementIT extends ITSupport {
         def records = KafkaTestUtils.getRecords(consumer)
         def alertEvent = records.iterator()
                 *.value()
-                .find { it.sourceEvent().id() == measurementEvent.id()}
+                .find { it.getSourceEvent().getId() == measurementEvent.getId() }
 
         then: 'An alert exists'
-        alertEvent.sourceEvent() == measurementEvent
+        alertEvent.getSourceEvent() == measurementEvent
     }
 
 }

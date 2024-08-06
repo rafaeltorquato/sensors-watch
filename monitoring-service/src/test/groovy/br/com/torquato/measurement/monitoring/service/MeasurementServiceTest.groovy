@@ -2,12 +2,9 @@ package br.com.torquato.measurement.monitoring.service
 
 import br.com.torquato.measurement.monitoring.domain.*
 import br.com.torquato.measurement.monitoring.port.MeasurementAlertEventRecipient
-import br.com.torquato.measurement.schema.MeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementType
+import br.com.torquato.measurements.schema.Schema
 import org.springframework.dao.DuplicateKeyException
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class MeasurementServiceTest extends Specification {
 
@@ -30,14 +27,14 @@ class MeasurementServiceTest extends Specification {
 
     def "Should notify an Alert when threshold is overcome"() {
         given:
-        def event = new MeasurementEvent(
-                "1",
-                "w1",
-                "s1",
-                value,
-                type,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(value)
+                .setType(type)
+                .setMoment(System.currentTimeMillis())
+                .build()
 
         mockedThresholdRepository.getByType(type) >> {
             Optional.of(new MeasurementThreshold(
@@ -55,20 +52,20 @@ class MeasurementServiceTest extends Specification {
 
         where:
         type                        | threshold | value
-        MeasurementType.HUMIDITY    | 50        | 51
-        MeasurementType.TEMPERATURE | 35        | 36
+        Schema.MeasurementType.HUMIDITY    | 50        | 51
+        Schema.MeasurementType.TEMPERATURE | 35        | 36
     }
 
     def "Shouldn't notify an Alert when threshold isn't overcome"() {
         given:
-        def event = new MeasurementEvent(
-                "1",
-                "w1",
-                "s1",
-                value,
-                type,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(value)
+                .setType(type)
+                .setMoment(System.currentTimeMillis())
+                .build()
 
         mockedThresholdRepository.getByType(type) >> {
             Optional.of(new MeasurementThreshold(
@@ -86,22 +83,22 @@ class MeasurementServiceTest extends Specification {
 
         where:
         type                        | threshold | value
-        MeasurementType.HUMIDITY    | 50        | 50
-        MeasurementType.HUMIDITY    | 50        | 49
-        MeasurementType.TEMPERATURE | 35        | 35
-        MeasurementType.TEMPERATURE | 35        | 34
+        Schema.MeasurementType.HUMIDITY    | 50        | 50
+        Schema.MeasurementType.HUMIDITY    | 50        | 49
+        Schema.MeasurementType.TEMPERATURE | 35        | 35
+        Schema.MeasurementType.TEMPERATURE | 35        | 34
     }
 
     def "Should notify an Alert"() {
         given:
-        def event = new MeasurementEvent(
-                "1",
-                "w1",
-                "s1",
-                value,
-                type,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(value)
+                .setType(type)
+                .setMoment(System.currentTimeMillis())
+                .build()
 
         mockedThresholdRepository.getByType(type) >> {
             Optional.of(new MeasurementThreshold(
@@ -119,20 +116,20 @@ class MeasurementServiceTest extends Specification {
 
         where:
         type                        | threshold | value
-        MeasurementType.HUMIDITY    | 50        | 51
-        MeasurementType.TEMPERATURE | 35        | 36
+        Schema.MeasurementType.HUMIDITY    | 50        | 51
+        Schema.MeasurementType.TEMPERATURE | 35        | 36
     }
 
     def "Shouldn't notify when event is duplicated"() {
         given:
-        def event = new MeasurementEvent(
-                "1",
-                "w1",
-                "s1",
-                value,
-                type,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(value)
+                .setType(type)
+                .setMoment(System.currentTimeMillis())
+                .build()
 
         mockedThresholdRepository.getByType(type) >> {
             Optional.of(new MeasurementThreshold(
@@ -152,26 +149,26 @@ class MeasurementServiceTest extends Specification {
         thrown(DuplicatedEventException)
 
         where:
-        type                        | threshold | value
-        MeasurementType.HUMIDITY    | 50        | 51
-        MeasurementType.TEMPERATURE | 35        | 36
+        type                               | threshold | value
+        Schema.MeasurementType.HUMIDITY    | 50        | 51
+        Schema.MeasurementType.TEMPERATURE | 35        | 36
     }
 
     def "Should delete processed event"() {
         given:
         def eventId = "1"
-        def event = new MeasurementEvent(
-                eventId,
-                "w1",
-                "s1",
-                51,
-                MeasurementType.HUMIDITY,
-                LocalDateTime.now()
-        )
-        mockedThresholdRepository.getByType(MeasurementType.HUMIDITY) >> {
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId(eventId)
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(51)
+                .setType(Schema.MeasurementType.HUMIDITY)
+                .setMoment(System.currentTimeMillis())
+                .build()
+        mockedThresholdRepository.getByType(Schema.MeasurementType.HUMIDITY) >> {
             Optional.of(new MeasurementThreshold(
                     (short) 1,
-                    MeasurementType.HUMIDITY,
+                    Schema.MeasurementType.HUMIDITY,
                     50
             ))
         }
@@ -190,18 +187,18 @@ class MeasurementServiceTest extends Specification {
     def "Should handle unprocessed event"() {
         given:
         def eventId = "1"
-        def event = new MeasurementEvent(
-                eventId,
-                "w1",
-                "s1",
-                50,
-                MeasurementType.HUMIDITY,
-                LocalDateTime.now()
-        )
-        mockedThresholdRepository.getByType(MeasurementType.HUMIDITY) >> {
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId(eventId)
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(50)
+                .setType(Schema.MeasurementType.HUMIDITY)
+                .setMoment(System.currentTimeMillis())
+                .build()
+        mockedThresholdRepository.getByType(Schema.MeasurementType.HUMIDITY) >> {
             Optional.of(new MeasurementThreshold(
                     (short) 1,
-                    MeasurementType.HUMIDITY,
+                    Schema.MeasurementType.HUMIDITY,
                     40
             ))
         }

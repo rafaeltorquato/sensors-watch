@@ -68,7 +68,7 @@ services:
       dockerfile: Dockerfile_warehouse
     environment:
       - 'SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092'
-      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=schema-registry:8081'
+      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://schema-registry:8081'
       - 'LOGGING_LEVEL_ROOT=warn'
     ports:
       - 3345:3345/udp
@@ -88,7 +88,7 @@ services:
       dockerfile: Dockerfile_monitoring
     environment:
       - 'SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092'
-      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=schema-registry:8081'
+      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://schema-registry:8081'
       - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/measurements'
       - 'LOGGING_LEVEL_ROOT=warn'
     deploy:

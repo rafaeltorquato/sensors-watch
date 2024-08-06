@@ -1,9 +1,7 @@
 package br.com.torquato.measurement.warehouse.adapter.mapper;
 
-import br.com.torquato.measurement.schema.MeasurementEvent;
-import br.com.torquato.measurement.schema.MeasurementType;
 import br.com.torquato.measurement.warehouse.config.Configurations;
-import br.com.torquato.measurement.warehouse.utils.LocalDateTimeUtils;
+import br.com.torquato.measurements.schema.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -11,7 +9,6 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -21,19 +18,18 @@ import java.util.function.Supplier;
 public class MeasurementEventMapper {
 
     private final Configurations configurations;
-    private final Supplier<LocalDateTime> localDateTimeSupplier;
+    private final Supplier<Long> currentTimestampSupplier;
     private final Supplier<UUID> ramdomUuidSupplier;
 
-    public MeasurementEvent from(final Message<byte[]> message, final MeasurementType type) {
+    public Schema.MeasurementEvent from(final Message<byte[]> message, final Schema.MeasurementType type) {
         final MessageHeaders headers = message.getHeaders();
         UUID uuid = headers.getId();
         if (uuid == null) {
             uuid = this.ramdomUuidSupplier.get();
         }
         final String messageId = uuid.toString();
-        final LocalDateTime moment = Optional.ofNullable(headers.getTimestamp())
-                .map(LocalDateTimeUtils::toLocalDateTime)
-                .orElseGet(this.localDateTimeSupplier);
+        final Long moment = Optional.ofNullable(headers.getTimestamp())
+                .orElseGet(this.currentTimestampSupplier);
 
         final Map<String, String> parameters = getParametersMap(message);
         final String sensorId = parameters.get("sensor_id");
@@ -41,14 +37,18 @@ public class MeasurementEventMapper {
                 .map(Integer::parseInt)
                 .orElse(null);
 
-        return new MeasurementEvent(
-                messageId,
-                this.configurations.getWarehouseId(),
-                sensorId,
-                value,
-                type,
-                moment
-        );
+        try {
+            return Schema.MeasurementEvent.newBuilder()
+                    .setId(messageId)
+                    .setWarehouseId(this.configurations.getWarehouseId())
+                    .setSensorId(sensorId)
+                    .setValue(value)
+                    .setType(type)
+                    .setMoment(moment)
+                    .build();
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private Map<String, String> getParametersMap(final Message<byte[]> message) {

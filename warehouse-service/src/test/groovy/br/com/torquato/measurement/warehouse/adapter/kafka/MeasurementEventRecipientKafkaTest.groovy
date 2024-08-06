@@ -1,13 +1,10 @@
 package br.com.torquato.measurement.warehouse.adapter.kafka
 
-import br.com.torquato.measurement.schema.MalformedMeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementType
+
+import br.com.torquato.measurements.schema.Schema
+import com.google.protobuf.ByteString
 import org.springframework.kafka.core.KafkaTemplate
 import spock.lang.Specification
-
-import java.time.LocalDateTime
-
 
 class MeasurementEventRecipientKafkaTest extends Specification {
 
@@ -21,14 +18,15 @@ class MeasurementEventRecipientKafkaTest extends Specification {
 
     def "Should send MeasurementEvent"() {
         given:
-        def event = new MeasurementEvent(
-                "1",
-                "w01",
-                "s01",
-                30,
-                type as MeasurementType,
-                LocalDateTime.now()
-        )
+        def event = Schema.MeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("w01")
+                .setSensorId("s01")
+                .setValue(30)
+                .setType(type)
+                .setMoment(System.currentTimeMillis())
+                .build()
+
 
         when:
         recipient.send(event)
@@ -37,21 +35,21 @@ class MeasurementEventRecipientKafkaTest extends Specification {
         1 * mockedKafkaTemplate.send(_, _, event)
 
         where:
-        type                        | topic
-        MeasurementType.HUMIDITY    | "humidity-measurements-data"
-        MeasurementType.TEMPERATURE | "temperature-measurements-data"
+        type                               | topic
+        Schema.MeasurementType.HUMIDITY    | "humidity-measurements-data"
+        Schema.MeasurementType.TEMPERATURE | "temperature-measurements-data"
     }
 
 
     def "Should send MalformedMeasurementEvent"() {
         given:
-        def malformedEvent = new MalformedMeasurementEvent(
-                "1",
-                "w01",
-                MeasurementType.HUMIDITY,
-                LocalDateTime.now(),
-                "sensor_id;value"
-        )
+        def malformedEvent = Schema.MalformedMeasurementEvent.newBuilder()
+                .setId("1")
+                .setWarehouseId("1")
+                .setType(Schema.MeasurementType.HUMIDITY)
+                .setMoment(System.currentTimeMillis())
+                .setPayload(ByteString.copyFromUtf8("sensor_id;value"))
+                .build();
 
         when:
         recipient.send(malformedEvent)

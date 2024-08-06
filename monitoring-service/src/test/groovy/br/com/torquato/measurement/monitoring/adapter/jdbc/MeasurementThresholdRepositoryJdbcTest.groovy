@@ -1,7 +1,7 @@
 package br.com.torquato.measurement.monitoring.adapter.jdbc
 
 import br.com.torquato.measurement.monitoring.domain.MeasurementThreshold
-import br.com.torquato.measurement.schema.MeasurementType
+import br.com.torquato.measurements.schema.Schema
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
@@ -19,17 +19,17 @@ class MeasurementThresholdRepositoryJdbcTest extends Specification {
 
     def "Should return a Threshold"() {
         given:
-        def threshold = new MeasurementThreshold(Short.valueOf("1"), type as MeasurementType, 30)
+        def threshold = new MeasurementThreshold(Short.valueOf("1"), type as Schema.MeasurementType, 30)
         mockedJdbcTemplate.queryForObject(_ as String, _ as BeanPropertyRowMapper, _) >> threshold
 
         when:
-        def optional = repositoryJdbc.getByType(type as MeasurementType)
+        def optional = repositoryJdbc.getByType(type as Schema.MeasurementType)
 
         then:
         optional.get() == threshold
 
         where:
-        type << MeasurementType.values()
+        type << Schema.MeasurementType.values()
     }
 
     def "Should return an empty Optional when there is no threshold"() {
@@ -37,13 +37,13 @@ class MeasurementThresholdRepositoryJdbcTest extends Specification {
         mockedJdbcTemplate.queryForObject(_ as String, _ as BeanPropertyRowMapper, _) >> null
 
         when:
-        def optional = repositoryJdbc.getByType(type as MeasurementType)
+        def optional = repositoryJdbc.getByType(type as Schema.MeasurementType)
 
         then:
         optional.isEmpty()
 
         where:
-        type << MeasurementType.values()
+        type << Schema.MeasurementType.values()
     }
 
     def "Should return an empty Optional when EmptyResultDataAccessException occurs"() {
@@ -53,13 +53,13 @@ class MeasurementThresholdRepositoryJdbcTest extends Specification {
         }
 
         when:
-        def optional = repositoryJdbc.getByType(type as MeasurementType)
+        def optional = repositoryJdbc.getByType(type as Schema.MeasurementType)
 
         then:
         optional.isEmpty()
 
         where:
-        type << MeasurementType.values()
+        type << Schema.MeasurementType.values()
     }
 
 }

@@ -1,8 +1,9 @@
 package br.com.torquato.measurement.warehouse
 
-import br.com.torquato.measurement.schema.MeasurementEvent
+
 import br.com.torquato.measurement.warehouse.support.ITSupport
 import br.com.torquato.measurement.warehouse.support.UdpClient
+import br.com.torquato.measurements.schema.Schema
 import org.apache.kafka.clients.consumer.Consumer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.core.ConsumerFactory
@@ -12,12 +13,12 @@ class HumiditySensorIT extends ITSupport {
 
     UdpClient humidityClient
     @Autowired
-    ConsumerFactory<String, MeasurementEvent> consumerFactory
-    Consumer<String, MeasurementEvent> consumer
+    ConsumerFactory<String, Schema.MeasurementEvent> consumerFactory
+    Consumer<String, Schema.MeasurementEvent> consumer
 
     def setup() {
         humidityClient = new UdpClient("localhost", 3345)
-        this.consumer = consumerFactory.createConsumer()
+        consumer = consumerFactory.createConsumer()
     }
 
     def cleanup() {
@@ -42,11 +43,11 @@ class HumiditySensorIT extends ITSupport {
         then: 'Kafka topic humidity-measurements-data has both messages'
         records.iterator()
                 *.value()
-                *.sensorId()
+                *.getSensorId()
                 .containsAll(["h1", "h2"])
         records.iterator()
                 *.value()
-                *.value()
+                *.getValue()
                 .containsAll([50, 51])
 
     }

@@ -1,15 +1,12 @@
 package br.com.torquato.measurement.warehouse.adapter.mapper
 
-
-import br.com.torquato.measurement.schema.MeasurementType
 import br.com.torquato.measurement.warehouse.config.Configurations
-import br.com.torquato.measurement.warehouse.utils.LocalDateTimeUtils
+import br.com.torquato.measurements.schema.Schema
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHeaders
 import spock.lang.Specification
 
 import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime
 import java.util.function.Supplier
 
 class MeasurementEventMapperTest extends Specification {
@@ -17,21 +14,21 @@ class MeasurementEventMapperTest extends Specification {
     MeasurementEventMapper mapper
     Message<byte[]> mockedMessage
     MessageHeaders mockedHeaders
-    Supplier<LocalDateTime> mockedLocalDateTimeSupplier
+    Supplier<Long> mockedTimestampSupplier
     Supplier<UUID> mockedUuidSupplier
 
     def setup() {
         mockedMessage = Stub()
         mockedHeaders = Stub()
         mockedMessage.headers >> mockedHeaders
-        mockedLocalDateTimeSupplier = Stub()
+        mockedTimestampSupplier = Stub()
         mockedUuidSupplier = Stub()
 
         def mockedConfigurations = Stub(Configurations)
         mockedConfigurations.warehouseId >> 'default'
         mapper = new MeasurementEventMapper(
                 mockedConfigurations,
-                mockedLocalDateTimeSupplier,
+                mockedTimestampSupplier,
                 mockedUuidSupplier
         )
     }
@@ -46,9 +43,10 @@ class MeasurementEventMapperTest extends Specification {
         mockedHeaders.getTimestamp() >> timestamp
 
         when:
-        mapper.from(mockedMessage, MeasurementType.TEMPERATURE)
+        mapper.from(mockedMessage, Schema.MeasurementType.TEMPERATURE)
 
         then:
+
         thrown(IllegalArgumentException)
 
         where:
@@ -69,29 +67,29 @@ class MeasurementEventMapperTest extends Specification {
 
         then:
         evt != null
-        evt.id() == messageId.toString()
-        evt.value() == value
-        evt.sensorId() == sensorId
-        evt.warehouseId() == 'default'
-        evt.type() == type
-        evt.moment() == LocalDateTimeUtils.toLocalDateTime(timestamp)
+        evt.getId() == messageId.toString()
+        evt.getValue() == value
+        evt.getSensorId() == sensorId
+        evt.getWarehouseId() == 'default'
+        evt.getType() == type
+        evt.getMoment() == timestamp
 
         where:
-        type                        | sensorId | value
-        MeasurementType.TEMPERATURE | 't1'     | 30
-        MeasurementType.HUMIDITY    | 'h1'     | 60
+        type                               | sensorId | value
+        Schema.MeasurementType.TEMPERATURE | 't1'     | 30
+        Schema.MeasurementType.HUMIDITY    | 'h1'     | 60
     }
 
 
     def "Should map MeasurementEvent with success using suppliers"() {
         given:
         def messageId = UUID.randomUUID()
-        def moment = LocalDateTime.now()
+        def moment = System.currentTimeMillis()
 
         mockedHeaders.getId() >> null
         mockedHeaders.getTimestamp() >> null
         mockedMessage.payload >> "sensor_id=$sensorId;value=$value".getBytes(StandardCharsets.UTF_8)
-        mockedLocalDateTimeSupplier.get() >> moment
+        mockedTimestampSupplier.get() >> moment
         mockedUuidSupplier.get() >> messageId
 
         when:
@@ -99,17 +97,17 @@ class MeasurementEventMapperTest extends Specification {
 
         then:
         evt != null
-        evt.id() == messageId.toString()
-        evt.value() == value
-        evt.sensorId() == sensorId
-        evt.warehouseId() == 'default'
-        evt.type() == type
-        evt.moment() == moment
+        evt.getId() == messageId.toString()
+        evt.getValue() == value
+        evt.getSensorId() == sensorId
+        evt.getWarehouseId() == 'default'
+        evt.getType() == type
+        evt.getMoment() == moment
 
         where:
-        type                        | sensorId | value
-        MeasurementType.TEMPERATURE | 't1'     | 30
-        MeasurementType.HUMIDITY    | 'h1'     | 60
+        type                               | sensorId | value
+        Schema.MeasurementType.TEMPERATURE | 't1'     | 30
+        Schema.MeasurementType.HUMIDITY    | 'h1'     | 60
     }
 
 

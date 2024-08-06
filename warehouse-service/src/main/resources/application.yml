@@ -10,12 +10,13 @@ spring:
     bootstrap-servers: localhost:19092
     properties:
       schema.registry.url: http://localhost:8081
-      value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
     producer:
       key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
-      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+      value-serializer: "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer"
       properties:
         enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        value.subject.name.strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
       acks: "all"
 
 app:

@@ -33,6 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <groovy.version>4.0.22</groovy.version>
+        <kafka-protobuf-serializer.version>7.7.0</kafka-protobuf-serializer.version>
     </properties>
 
     <dependencyManagement>
@@ -44,6 +45,33 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- enforce same dependencies-->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>3.23.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio-jvm</artifactId>
+                <version>3.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>3.42.0</version>
+            </dependency>
+            <!-- FIX CVEs
+            https://devhub.checkmarx.com/cve-details/CVE-2024-26308/
+            https://devhub.checkmarx.com/cve-details/CVE-2024-25710/
+            https://devhub.checkmarx.com/cve-details/CVE-2023-42503/
+            -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.26.2</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -87,6 +115,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-protobuf-serializer</artifactId>
+            <version>${kafka-protobuf-serializer.version}</version>
         </dependency>
         <!-- TEST DEPENDENCIES -->
         <dependency>
@@ -309,5 +342,26 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- This Confluent repo is very slow but necessary for protobuf kafka serde-->
+        <repository>
+            <id>confluent</id>
+            <name>Confluent Repo</name>
+            <url>https://packages.confluent.io/maven/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>

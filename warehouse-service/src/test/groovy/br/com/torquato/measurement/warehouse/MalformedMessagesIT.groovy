@@ -1,26 +1,28 @@
 package br.com.torquato.measurement.warehouse
 
-import br.com.torquato.measurement.schema.MalformedMeasurementEvent
-import br.com.torquato.measurement.schema.MeasurementType
+
 import br.com.torquato.measurement.warehouse.support.ITSupport
 import br.com.torquato.measurement.warehouse.support.UdpClient
+import br.com.torquato.measurements.schema.Schema
 import org.apache.kafka.clients.consumer.Consumer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.test.utils.KafkaTestUtils
+
+import java.nio.charset.StandardCharsets
 
 class MalformedMessagesIT extends ITSupport {
 
     UdpClient temperatureClient
     UdpClient humidityClient
     @Autowired
-    ConsumerFactory<String, MalformedMeasurementEvent> consumerFactory
-    Consumer<String, MalformedMeasurementEvent> consumer
+    ConsumerFactory<String, Schema.MalformedMeasurementEvent> consumerFactory
+    Consumer<String, Schema.MalformedMeasurementEvent> consumer
 
     def setup() {
         humidityClient = new UdpClient("localhost", 3345)
         temperatureClient = new UdpClient("localhost", 3344)
-        this.consumer = consumerFactory.createConsumer()
+        consumer = consumerFactory.createConsumer()
     }
 
     def cleanup() {
@@ -46,10 +48,12 @@ class MalformedMessagesIT extends ITSupport {
         records.count() == 2
         records.iterator()
                 *.value()
-                *.type().containsAll(MeasurementType.values())
+                *.getType().containsAll(Schema.MeasurementType.values())
         records.iterator()
                 *.value()
-                *.payload().containsAll([payload1, payload2])
+                *.getPayload()
+                *.toString(StandardCharsets.UTF_8)
+                .containsAll([payload1, payload2])
 
 
     }

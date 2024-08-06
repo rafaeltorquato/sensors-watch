@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -13,10 +12,10 @@ import java.util.function.Supplier;
 public class DefaultConfig {
 
     @Bean
-    public Supplier<LocalDateTime> currentLocalDateTime() {
+    public Supplier<Long> currentTimestamp() {
         return () -> {
             log.warn("Using a generated timestamp. Is recommended that client send the timestamp.");
-            return LocalDateTime.now();
+            return System.currentTimeMillis();
         };
     }
 
