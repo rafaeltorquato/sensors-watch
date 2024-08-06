@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MalformedMeasurementEventMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">warehouse-service</a> &gt; <a href="index.source.html" class="el_package">br.com.torquato.measurement.warehouse.adapter.mapper</a> &gt; <span class="el_source">MalformedMeasurementEventMapper.java</span></div><h1>MalformedMeasurementEventMapper.java</h1><pre class="source lang-java linenums">package br.com.torquato.measurement.warehouse.adapter.mapper;
+
+import br.com.torquato.measurement.warehouse.config.Configurations;
+import br.com.torquato.measurements.schema.Schema;
+import com.google.protobuf.ByteString;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
+
+<span class="fc" id="L16">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class MalformedMeasurementEventMapper {
+
+    private final Configurations configurations;
+    private final Supplier&lt;Long&gt; currentTimestampSupplier;
+    private final Supplier&lt;UUID&gt; ramdomUuidSupplier;
+
+    public Schema.MalformedMeasurementEvent from(final Message&lt;byte[]&gt; message, final Schema.MeasurementType type) {
+<span class="fc" id="L26">        final MessageHeaders headers = message.getHeaders();</span>
+<span class="fc" id="L27">        UUID uuid = headers.getId();</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (uuid == null) {</span>
+<span class="fc" id="L29">            uuid = this.ramdomUuidSupplier.get();</span>
+        }
+<span class="fc" id="L31">        final String messageId = uuid.toString();</span>
+<span class="fc" id="L32">        final Long moment = Optional.ofNullable(headers.getTimestamp())</span>
+<span class="fc" id="L33">                .orElseGet(this.currentTimestampSupplier);</span>
+<span class="fc" id="L34">        return Schema.MalformedMeasurementEvent.newBuilder()</span>
+<span class="fc" id="L35">                .setId(messageId)</span>
+<span class="fc" id="L36">                .setWarehouseId(this.configurations.getWarehouseId())</span>
+<span class="fc" id="L37">                .setType(type)</span>
+<span class="fc" id="L38">                .setMoment(moment)</span>
+<span class="fc" id="L39">                .setPayload(ByteString.copyFrom(message.getPayload()))</span>
+<span class="fc" id="L40">                .build();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

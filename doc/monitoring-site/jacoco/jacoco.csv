@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+monitoring-service,br.com.torquato.measurement.monitoring.adapter.jdbc,MeasurementThresholdRepositoryJdbc,0,37,0,2,0,8,0,3,0,2
+monitoring-service,br.com.torquato.measurement.monitoring.adapter.jdbc,ProcessedEventRepositoryJdbc,0,45,0,4,0,11,0,5,0,3
+monitoring-service,br.com.torquato.measurement.monitoring.domain,UnprocessedEvent,0,6,0,0,0,1,0,1,0,1
+monitoring-service,br.com.torquato.measurement.monitoring.domain,ProcessedEvent,0,6,0,0,0,1,0,1,0,1
+monitoring-service,br.com.torquato.measurement.monitoring.domain,DuplicatedEventException,0,4,0,0,0,2,0,1,0,1
+monitoring-service,br.com.torquato.measurement.monitoring.service,MeasurementService,0,109,0,2,0,35,0,6,0,5
+monitoring-service,br.com.torquato.measurement.monitoring.adapter.kafka,MeasurementAlertEventRecipientKafka,0,52,0,4,0,13,0,5,0,3
+monitoring-service,br.com.torquato.measurement.monitoring.adapter.kafka,KafkaConsumers,0,30,0,0,0,10,0,4,0,4

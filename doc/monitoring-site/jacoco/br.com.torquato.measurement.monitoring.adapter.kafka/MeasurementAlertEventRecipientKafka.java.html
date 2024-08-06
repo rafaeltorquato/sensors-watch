@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MeasurementAlertEventRecipientKafka.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">monitoring-service</a> &gt; <a href="index.source.html" class="el_package">br.com.torquato.measurement.monitoring.adapter.kafka</a> &gt; <span class="el_source">MeasurementAlertEventRecipientKafka.java</span></div><h1>MeasurementAlertEventRecipientKafka.java</h1><pre class="source lang-java linenums">package br.com.torquato.measurement.monitoring.adapter.kafka;
+
+import br.com.torquato.measurement.monitoring.domain.UnprocessedEvent;
+import br.com.torquato.measurement.monitoring.port.MeasurementAlertEventRecipient;
+import br.com.torquato.measurements.schema.Schema;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+
+<span class="fc" id="L12">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class MeasurementAlertEventRecipientKafka implements MeasurementAlertEventRecipient {
+
+    private final ApplicationEventPublisher eventPublisher;
+    private final KafkaTemplate&lt;String, Object&gt; kafkaTemplate;
+
+    @Override
+    public void send(final Schema.MeasurementAlertEvent alertEvent) {
+<span class="fc" id="L22">        final Schema.MeasurementEvent sourceEvent = alertEvent.getSourceEvent();</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        final String topic = switch (sourceEvent.getType()) {</span>
+<span class="fc" id="L24">            case TEMPERATURE -&gt; &quot;temperature-measurements-alert-data&quot;;</span>
+<span class="fc" id="L25">            case HUMIDITY -&gt; &quot;humidity-measurements-alert-data&quot;;</span>
+        };
+        // Ensure that events from same warehouse and sensor will be processed like a queue
+<span class="fc" id="L28">        final String messageKey = sourceEvent.getWarehouseId() + &quot;-&quot; + sourceEvent.getSensorId();</span>
+<span class="fc" id="L29">        var future = this.kafkaTemplate.send(topic, messageKey, alertEvent);</span>
+<span class="fc" id="L30">        future.whenCompleteAsync((stringObjectSendResult, throwable) -&gt; {</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">            if (throwable != null) {</span>
+<span class="fc" id="L32">                log.error(&quot;Cannot send measurement alert event.&quot;, throwable);</span>
+<span class="fc" id="L33">                this.eventPublisher.publishEvent(new UnprocessedEvent(sourceEvent.getId()));</span>
+            }
+<span class="fc" id="L35">        });</span>
+<span class="fc" id="L36">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

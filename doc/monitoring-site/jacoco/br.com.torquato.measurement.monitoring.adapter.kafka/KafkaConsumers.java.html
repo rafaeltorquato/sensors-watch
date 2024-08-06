@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KafkaConsumers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">monitoring-service</a> &gt; <a href="index.source.html" class="el_package">br.com.torquato.measurement.monitoring.adapter.kafka</a> &gt; <span class="el_source">KafkaConsumers.java</span></div><h1>KafkaConsumers.java</h1><pre class="source lang-java linenums">package br.com.torquato.measurement.monitoring.adapter.kafka;
+
+import br.com.torquato.measurement.monitoring.domain.DuplicatedEventException;
+import br.com.torquato.measurement.monitoring.service.MeasurementService;
+import br.com.torquato.measurements.schema.Schema;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.stereotype.Component;
+
+<span class="fc" id="L15">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class KafkaConsumers {
+
+    private final MeasurementService measurementService;
+
+    @RetryableTopic(
+            backoff = @Backoff(delay = 1000, multiplier = 2.0),
+            autoCreateTopics = &quot;false&quot;,
+            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+    @KafkaListener(topics = {&quot;temperature-measurements-data&quot;, &quot;humidity-measurements-data&quot;})
+    public void handleMeasurementEvent(final ConsumerRecord&lt;String, Schema.MeasurementEvent&gt; record) {
+        try {
+<span class="fc" id="L29">            measurementService.handle(record.value());</span>
+<span class="fc" id="L30">        } catch (DuplicatedEventException e) {</span>
+<span class="fc" id="L31">            log.info(&quot;{}&quot;, e.getMessage());</span>
+<span class="fc" id="L32">        }</span>
+<span class="fc" id="L33">    }</span>
+
+    @RetryableTopic(
+            backoff = @Backoff(delay = 1000, multiplier = 2.0),
+            autoCreateTopics = &quot;false&quot;,
+            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+    @KafkaListener(topics = {&quot;temperature-measurements-alert-data&quot;, &quot;humidity-measurements-alert-data&quot;})
+    public void handleAlertEvent(final ConsumerRecord&lt;String, Schema.MeasurementAlertEvent&gt; record) {
+<span class="fc" id="L41">        log.warn(&quot;ALERT: {}&quot;, record.value());</span>
+<span class="fc" id="L42">    }</span>
+
+    @RetryableTopic(
+            backoff = @Backoff(delay = 1000, multiplier = 2.0),
+            autoCreateTopics = &quot;false&quot;,
+            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+    @KafkaListener(topics = &quot;malformed-measurements-data&quot;)
+    public void handleMalformedEvent(final ConsumerRecord&lt;String, Schema.MalformedMeasurementEvent&gt; record) {
+<span class="fc" id="L50">        log.warn(&quot;MALFORMED: {}&quot;, record.value());</span>
+<span class="fc" id="L51">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

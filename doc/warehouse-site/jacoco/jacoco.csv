@@ -1,0 +1,5 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+warehouse-service,br.com.torquato.measurement.warehouse.adapter.mapper,MeasurementEventMapper,0,134,0,8,0,34,0,7,0,3
+warehouse-service,br.com.torquato.measurement.warehouse.adapter.mapper,MalformedMeasurementEventMapper,0,47,0,2,0,15,0,3,0,2
+warehouse-service,br.com.torquato.measurement.warehouse.adapter.kafka,MeasurementEventRecipientKafka,36,58,4,2,6,15,4,4,2,3
+warehouse-service,br.com.torquato.measurement.warehouse.adapter.udp,MeasurementUdp,0,57,0,0,0,17,0,5,0,5
