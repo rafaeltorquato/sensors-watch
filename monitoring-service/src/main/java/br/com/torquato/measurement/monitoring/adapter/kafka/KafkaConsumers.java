@@ -20,8 +20,8 @@ public class KafkaConsumers {
     private final ThresholdMonitoringService monitoringService;
 
     @RetryableTopic(
+            numPartitions = "3",
             backoff = @Backoff(delay = 1000, multiplier = 2.0),
-            autoCreateTopics = "false",
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
     @KafkaListener(topics = {"temperature-measurements-data", "humidity-measurements-data"})
     public void handleMeasurementEvent(final ConsumerRecord<String, Schema.MeasurementEvent> record) {
@@ -33,8 +33,8 @@ public class KafkaConsumers {
     }
 
     @RetryableTopic(
+            numPartitions = "3",
             backoff = @Backoff(delay = 1000, multiplier = 2.0),
-            autoCreateTopics = "false",
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
     @KafkaListener(topics = {"temperature-measurements-alert-data", "humidity-measurements-alert-data"})
     public void handleAlertEvent(final ConsumerRecord<String, Schema.MeasurementAlertEvent> record) {
@@ -42,8 +42,8 @@ public class KafkaConsumers {
     }
 
     @RetryableTopic(
+            numPartitions = "3",
             backoff = @Backoff(delay = 1000, multiplier = 2.0),
-            autoCreateTopics = "false",
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
     @KafkaListener(topics = "malformed-measurements-data")
     public void handleMalformedEvent(final ConsumerRecord<String, Schema.MalformedMeasurementEvent> record) {
