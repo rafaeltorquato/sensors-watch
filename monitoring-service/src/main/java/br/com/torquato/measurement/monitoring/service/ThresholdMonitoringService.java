@@ -28,13 +28,13 @@ public class ThresholdMonitoringService {
             return;
         }
 
+        final Schema.MeasurementAlertEvent alertEvent = Schema.MeasurementAlertEvent.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setSourceEvent(event)
+                .setMoment(System.currentTimeMillis())
+                .setThreshold(threshold.getValue())
+                .build();
         try {
-            final Schema.MeasurementAlertEvent alertEvent = Schema.MeasurementAlertEvent.newBuilder()
-                    .setId(UUID.randomUUID().toString())
-                    .setSourceEvent(event)
-                    .setMoment(System.currentTimeMillis())
-                    .setThreshold(threshold.getValue())
-                    .build();
             ensureIdempotence(event);
             this.alertEventRecipient.send(alertEvent);
         } catch (DuplicatedEventException e) {
@@ -45,7 +45,7 @@ public class ThresholdMonitoringService {
         }
     }
 
-    private void ensureIdempotence(Schema.MeasurementEvent event) {
+    private void ensureIdempotence(final Schema.MeasurementEvent event) {
         final ProcessedEvent processedEvent = new ProcessedEvent(event.getId());
         try {
             this.processedEventRepository.save(processedEvent);
@@ -61,7 +61,7 @@ public class ThresholdMonitoringService {
         deleteProcessed(event);
     }
 
-    private void deleteProcessed(UnprocessedEvent event) {
+    private void deleteProcessed(final UnprocessedEvent event) {
         final ProcessedEvent processedEvent = new ProcessedEvent(event.eventId());
         this.processedEventRepository.delete(processedEvent);
         log.warn("{} deleted!", processedEvent);
