@@ -34,7 +34,7 @@ public class MeasurementUdp {
         try {
             event = this.eventMapper.from(message, type);
         } catch (IllegalArgumentException e) {
-            log.warn("Malformed %s measurement event.".formatted(type));
+            log.warn("Malformed {} measurement event.", type);
             sendMalformedEvent(message, type);
             return;
         }
