@@ -4,8 +4,6 @@ class UdpClient {
 
     private DatagramSocket socket;
     private InetAddress address;
-
-    private byte[] buf;
     private final int port
 
     UdpClient(String host, int port) {
@@ -15,9 +13,8 @@ class UdpClient {
     }
 
     def sendEcho(String msg) {
-        buf = msg.getBytes();
-        def packet = new DatagramPacket(buf, buf.length, address, port);
-        socket.send(packet);
+        final byte[] buf = msg.getBytes();
+        socket.send(new DatagramPacket(buf, buf.length, address, port));
     }
 
     def close() {
