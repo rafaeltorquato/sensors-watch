@@ -6,7 +6,9 @@ import com.google.protobuf.Message;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
+import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +33,19 @@ public class KafkaConfig {
     }
 
     @Bean
+    NewTopic malformedMeasurementsTopic() {
+        return TopicBuilder.name("malformed-measurements-data").partitions(3)
+                .replicas(1).build();
+    }
+
+    @Bean
     DefaultKafkaProducerFactoryCustomizer defaultKafkaProducerFactoryCustomizer() {
         return producerFactory -> {
             final KafkaProtobufSerializer<Message> kafkaProtobufSerializer = new KafkaProtobufSerializer<>();
             final Serializer delegatingByTypeSerializer = new DelegatingByTypeSerializer(Map.of(
                     byte[].class, new ByteArraySerializer(),
+                    String.class, new StringSerializer(),
+                    Number.class, new LongSerializer(),
                     GeneratedMessageV3.class, kafkaProtobufSerializer,
                     Schema.MeasurementEvent.class, kafkaProtobufSerializer,
                     Schema.MeasurementAlertEvent.class, kafkaProtobufSerializer)

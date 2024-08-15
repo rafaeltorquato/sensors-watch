@@ -1,8 +1,4 @@
 spring:
-  docker:
-    compose:
-      skip:
-        in-tests: false
   config:
     activate:
       on-profile: local
@@ -19,18 +15,25 @@ spring:
       fail-fast: true
     bootstrap-servers: localhost:19092
     properties:
+      confluent.value.schema.validation: true
       schema.registry.url: http://localhost:8081
     producer:
       key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
       value-serializer: "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer"
       properties:
         enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
         value.subject.name.strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
       acks: "all"
     consumer:
       key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
-      value-deserializer: "io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer"
+      value-deserializer: "org.springframework.kafka.support.serializer.ErrorHandlingDeserializer"
       group-id: "${spring.application.name}-group"
-      auto-offset-reset: earliest
       properties:
+        spring.deserializer.value.delegate.class: io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer
         derive.type: true
+      auto-offset-reset: earliest
+  docker:
+    compose:
+      skip:
+        in-tests: false
