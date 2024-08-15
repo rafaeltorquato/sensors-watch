@@ -60,7 +60,7 @@ services:
       timeout: 5s
       retries: 10
     ports:
-      - 5432:5432
+      - "5432:5432"
 
   warehouse1:
     container_name: warehouse1
@@ -71,8 +71,8 @@ services:
       - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://schema-registry:8081'
       - 'LOGGING_LEVEL_ROOT=warn'
     ports:
-      - 3345:3345/udp
-      - 3344:3344/udp
+      - "3345:3345/udp"
+      - "3344:3344/udp"
     deploy:
       resources:
         limits:
