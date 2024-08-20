@@ -70,9 +70,33 @@ services:
       - 'SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092'
       - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://schema-registry:8081'
       - 'LOGGING_LEVEL_ROOT=warn'
+      - 'app.warehouse-id=warehouse1'
     ports:
       - "3345:3345/udp"
       - "3344:3344/udp"
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "500MB"
+    depends_on:
+      schema-registry:
+        condition: service_started
+
+  warehouse2:
+    container_name: warehouse2
+    build:
+      dockerfile: Dockerfile_warehouse
+    environment:
+      - 'SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka-broker-1:9092'
+      - 'SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://schema-registry:8081'
+      - 'LOGGING_LEVEL_ROOT=warn'
+      - 'app.temperature.server-port=3354'
+      - 'app.humidity.server-port=3355'
+      - 'app.warehouse-id=warehouse2'
+    ports:
+      - "3355:3355/udp"
+      - "3354:3354/udp"
     deploy:
       resources:
         limits:
@@ -102,4 +126,6 @@ services:
       postgres:
         condition: service_healthy
       warehouse1:
+        condition: service_started
+      warehouse2:
         condition: service_started
