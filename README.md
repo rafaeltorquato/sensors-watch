@@ -24,8 +24,8 @@ The project was divided into three pieces:
 * **temperature-measurements-data** - Contains temperature measurements.
 * **humidity-measurements-data** - Contains humidity measurements.
 * **malformed-measurements-data** - Contains malformed temperature and humidity payloads.
-* **humidity-measurements-alert-data** - Contains high temperature alerts.
-* **temperature-measurements-alert-data**- Contains high humidity alerts.
+* **humidity-measurements-alert-data** - Contains high humidity alerts.
+* **temperature-measurements-alert-data**- Contains high temperature alerts.
 
 All topics above have a DLT (Death Letter Topic) that receive unprocessed messages.  
 The DTL topic has the suffix -dlt, for example: **humidity-measurements-data-dlt**.
