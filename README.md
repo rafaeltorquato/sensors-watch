@@ -48,9 +48,11 @@ The DTL topic has the suffix -dlt, for example: **humidity-measurements-data-dlt
 
 ## Requirements
 
-* Require Docker and Docker Compose plugin
-* Apache maven (Run Unit ant Integration Tests)
-* JDK 21 (Run Unit ant Integration Tests)
+* Docker and Docker Compose plugin
+* Apache maven (Run Unit and Integration Tests)
+* JDK 21 (Run Unit and Integration Tests)
+* Unix/Linux OS
+* Netcat to send UDP events (nc command-line tool)
 
 ## Run the solution
 
